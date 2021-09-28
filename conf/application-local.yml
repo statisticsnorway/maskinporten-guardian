@@ -1,0 +1,37 @@
+micronaut:
+  application:
+    name: maskinporten-guardian
+
+  security:
+    token:
+      name-key: preferred_username
+      jwt:
+        signatures:
+          jwks:
+            keycloak-prod:
+              url: 'https://keycloak.prod-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
+            keycloak-staging:
+              url: 'https://keycloak.staging-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
+
+services:
+  secrets:
+    impl: LOCAL
+    override-values:
+      ssb-dev-p12-passphrase: pass123
+    override-files:
+      ssb-dev-p12-certificate: src/test/resources/virksomhetssertifikat-test.p12
+
+certificates:
+  certificate-secret-id: ssb-dev-p12-certificate
+  certificate-passphrase-secret-id: ssb-dev-p12-passphrase
+  certificate-keystore-entry-alias: testalias
+
+maskinporten:
+  token-endpoint: https://oidc-ver2.difi.no/idporten-oidc-provider/token
+  clients:
+    7ea43b76-6b7d-49e8-af2b-4114ebb66c80:
+      description: client used for testing
+      authorized-users:
+        - ssb-service-user-1
+        - ssb-service-user-2
+        - kenneth.schulstad@ssb.no

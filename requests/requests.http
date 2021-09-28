@@ -1,0 +1,10 @@
+POST {{maskinporten-guardian-baseurl}}/access-token
+Content-Type: application/json
+Authorization: Bearer {{dapla-access-token}}
+
+{
+  "maskinportenClientId": "7ea43b76-6b7d-49e8-af2b-4114ebb66c80",
+  "scopes": [
+    "some:scope1"
+  ]
+}

@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: no.ssb.maskinporten
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [annotation-api, app-name, gcp-cloud-trace, http-client, java, java-application, junit, logback, lombok, management, maven, netty-server, readme, security-annotations, security-jwt, shade, yaml]
