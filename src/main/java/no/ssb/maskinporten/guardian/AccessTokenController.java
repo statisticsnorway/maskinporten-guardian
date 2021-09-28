@@ -14,7 +14,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.ssb.maskinporten.ClientAuthorizer;
 import no.ssb.maskinporten.guardian.util.PrincipalUtil;
 
 import java.security.Principal;

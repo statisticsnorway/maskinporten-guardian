@@ -1,4 +1,4 @@
-package no.ssb.maskinporten;
+package no.ssb.maskinporten.guardian;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
