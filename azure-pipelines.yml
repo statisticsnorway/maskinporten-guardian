@@ -1,8 +1,13 @@
 trigger:
   branches:
     include:
-      - '*'
+      - 'master'
   tags:
+    include:
+      - '*'
+
+pr:
+  branches:
     include:
       - '*'
 
@@ -53,6 +58,7 @@ jobs:
   - job: buildAndPushDockerImage
     dependsOn: testAndBuild
     displayName: 'Build and push docker image'
+    condition: and(ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceVersionMessage'], '[maven-release-plugin] prepare for next development iteration')))
     steps:
 
       # Download pipeline artifact
@@ -80,19 +86,47 @@ jobs:
       - bash: |
           BRANCH="$(Build.SourceBranchName)"
           COMMIT_SHA="$(Build.SourceVersion)"
-          IMAGE_TAG="${BRANCH}-${COMMIT_SHA:0:8}"
+          IMAGE_TAG="imagescan-${BRANCH}-${COMMIT_SHA:0:8}"
           echo "Image tag: ${IMAGE_TAG}"
           echo "##vso[task.setvariable variable=image_tag]${IMAGE_TAG}"
         displayName: 'Create image tag'
         failOnStderr: true
       #Docker build and push
       - task: Docker@2
-        displayName: 'Build and push Docker image'
+        displayName: 'Docker Build'
         inputs:
+          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG)'
+          command: 'build'
+          Dockerfile: 'Dockerfile'
+          tags: 'imagescan-$(IMAGE_TAG)'
+      - task: Docker@2
+        displayName: 'Docker Push'
+        inputs:
+          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG)'
+          command: 'push'
           containerRegistry: 'gcrServiceConnection'
-          repository: 'prod-bip/ssb/dapla/maskinporten-guardian'
-          command: 'buildAndPush'
-          tags: '$(IMAGE_TAG)'
+          tags: 'imagescan-$(IMAGE_TAG)'
+      - task: DownloadSecureFile@1
+        name: gcrJsonKey
+        inputs:
+          secureFile: 'gcr-key.json'
+      - script: |
+          echo "##vso[task.setvariable variable=GOOGLE_APPLICATION_CREDENTIALS]$(gcrJsonKey.secureFilePath)"
+        displayName: 'Set GCR Key'
+      - task: gcr-vulneralbility-check@1
+        inputs:
+          projectId: 'prod-bip'
+          imageHost: 'https://eu.gcr.io/'
+          image: 'prod-bip/ssb/dapla/maskinporten-guardian'
+          imageTag: 'imagescan-$(IMAGE_TAG)'
+          timeBetweenRetries: '10000'
+      - script: |
+          set -e
+          cat $(gcrJsonKey.secureFilePath) | docker login -u _json_key --password-stdin https://eu.gcr.io/
+          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG) eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
+          docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
+        displayName: 'Retag Image'
+        condition: succeeded()
 
   - job: promoteToProduction
     displayName: 'Tag production image'
