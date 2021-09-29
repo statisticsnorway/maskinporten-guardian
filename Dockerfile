@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk:17
+FROM azul/zulu-openjdk-alpine:17
 RUN apk --no-cache add curl
 COPY target/maskinporten-guardian-*.jar maskinporten-guardian.jar
 COPY target/classes/logback*.xml /conf/
