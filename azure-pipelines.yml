@@ -89,7 +89,9 @@ jobs:
           IMAGE_TAG="${BRANCH}-${COMMIT_SHA:0:8}"
           SCAN_IMAGE_TAG="imagescan-${BRANCH}-${COMMIT_SHA:0:8}"
           echo "Image tag: ${IMAGE_TAG}"
+          echo "Scan image tag: ${SCAN_IMAGE_TAG}"
           echo "##vso[task.setvariable variable=image_tag]${IMAGE_TAG}"
+          echo "##vso[task.setvariable variable=scan_image_tag]${SCAN_IMAGE_TAG}"
         displayName: 'Create image tag'
         failOnStderr: true
       #Docker build and push
