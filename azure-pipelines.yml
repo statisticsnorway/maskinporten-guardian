@@ -75,40 +75,41 @@ jobs:
           cp -r $(Pipeline.Workspace)/target .
           ls -latr target
         displayName: 'Copy pipeline artifact into working directory'
-      #Docker login
-      - task: Docker@2
-        displayName: 'Docker login'
-        inputs:
-          command: 'login'
-          containerRegistry: 'gcrServiceConnection'
 
       #Create image tag
       - bash: |
           BRANCH="$(Build.SourceBranchName)"
           COMMIT_SHA="$(Build.SourceVersion)"
           IMAGE_TAG="${BRANCH}-${COMMIT_SHA:0:8}"
-          SCAN_IMAGE_TAG="imagescan-${BRANCH}-${COMMIT_SHA:0:8}"
+          SCAN_IMAGE_TAG="imagescan-${IMAGE_TAG}"
           echo "Image tag: ${IMAGE_TAG}"
           echo "Scan image tag: ${SCAN_IMAGE_TAG}"
           echo "##vso[task.setvariable variable=image_tag]${IMAGE_TAG}"
           echo "##vso[task.setvariable variable=scan_image_tag]${SCAN_IMAGE_TAG}"
         displayName: 'Create image tag'
         failOnStderr: true
-      #Docker build and push
+      #Docker build
       - task: Docker@2
         displayName: 'Docker Build'
         inputs:
           repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian'
           command: 'build'
           Dockerfile: 'Dockerfile'
-          tags: '$(SCAN_IMAGE_TAG)'
+          tags: $(SCAN_IMAGE_TAG)
+      #Docker login
+      - task: Docker@2
+        displayName: 'Docker login'
+        inputs:
+          command: 'login'
+          containerRegistry: 'gcrServiceConnection'
+      #Docker push
       - task: Docker@2
         displayName: 'Docker Push'
         inputs:
           repository: 'prod-bip/ssb/dapla/maskinporten-guardian'
           command: 'push'
           containerRegistry: 'gcrServiceConnection'
-          tags: '$(SCAN_IMAGE_TAG)'
+          tags: $(SCAN_IMAGE_TAG)
       - task: DownloadSecureFile@1
         name: gcrJsonKey
         inputs:
@@ -121,7 +122,7 @@ jobs:
           projectId: 'prod-bip'
           imageHost: 'https://eu.gcr.io/'
           image: 'prod-bip/ssb/dapla/maskinporten-guardian'
-          imageTag: '$(SCAN_IMAGE_TAG)'
+          imageTag: $(SCAN_IMAGE_TAG)
           timeBetweenRetries: '10000'
       - script: |
           set -e
