@@ -13,6 +13,10 @@ micronaut:
             keycloak-staging:
               url: 'https://keycloak.staging-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
 
+endpoints:
+  prometheus:
+    sensitive: false
+
 services:
   secrets:
     impl: LOCAL
@@ -34,3 +38,4 @@ maskinporten:
       authorized-users:
         - ssb-service-user-1
         - ssb-service-user-2
+        - kenneth.schulstad@ssb.no
