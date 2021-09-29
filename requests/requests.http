@@ -8,3 +8,15 @@ Authorization: Bearer {{dapla-access-token}}
     "some:scope1"
   ]
 }
+
+###
+
+GET {{maskinporten-guardian-baseurl}}/health/readiness
+
+###
+
+GET {{maskinporten-guardian-baseurl}}/health/liveness
+
+###
+
+GET {{maskinporten-guardian-baseurl}}/prometheus
