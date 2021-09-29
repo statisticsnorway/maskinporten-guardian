@@ -105,7 +105,7 @@ jobs:
       - task: Docker@2
         displayName: 'Docker Push'
         inputs:
-          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian'
+          repository: 'prod-bip/ssb/dapla/maskinporten-guardian'
           command: 'push'
           containerRegistry: 'gcrServiceConnection'
           tags: '$(SCAN_IMAGE_TAG)'
