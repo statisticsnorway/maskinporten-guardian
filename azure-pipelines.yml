@@ -86,7 +86,8 @@ jobs:
       - bash: |
           BRANCH="$(Build.SourceBranchName)"
           COMMIT_SHA="$(Build.SourceVersion)"
-          IMAGE_TAG="imagescan-${BRANCH}-${COMMIT_SHA:0:8}"
+          IMAGE_TAG="${BRANCH}-${COMMIT_SHA:0:8}"
+          SCAN_IMAGE_TAG="imagescan-${BRANCH}-${COMMIT_SHA:0:8}"
           echo "Image tag: ${IMAGE_TAG}"
           echo "##vso[task.setvariable variable=image_tag]${IMAGE_TAG}"
         displayName: 'Create image tag'
@@ -95,17 +96,17 @@ jobs:
       - task: Docker@2
         displayName: 'Docker Build'
         inputs:
-          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG)'
+          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(SCAN_IMAGE_TAG)'
           command: 'build'
           Dockerfile: 'Dockerfile'
-          tags: 'imagescan-$(IMAGE_TAG)'
+          tags: '$(SCAN_IMAGE_TAG)'
       - task: Docker@2
         displayName: 'Docker Push'
         inputs:
-          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG)'
+          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(SCAN_IMAGE_TAG)'
           command: 'push'
           containerRegistry: 'gcrServiceConnection'
-          tags: 'imagescan-$(IMAGE_TAG)'
+          tags: '$(SCAN_IMAGE_TAG)'
       - task: DownloadSecureFile@1
         name: gcrJsonKey
         inputs:
@@ -118,12 +119,12 @@ jobs:
           projectId: 'prod-bip'
           imageHost: 'https://eu.gcr.io/'
           image: 'prod-bip/ssb/dapla/maskinporten-guardian'
-          imageTag: 'imagescan-$(IMAGE_TAG)'
+          imageTag: '$(SCAN_IMAGE_TAG)'
           timeBetweenRetries: '10000'
       - script: |
           set -e
           cat $(gcrJsonKey.secureFilePath) | docker login -u _json_key --password-stdin https://eu.gcr.io/
-          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG) eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
+          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(SCAN_IMAGE_TAG) eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
           docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
         displayName: 'Retag Image'
         condition: succeeded()
