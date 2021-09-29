@@ -1,0 +1,155 @@
+trigger:
+  branches:
+    include:
+      - 'master'
+  tags:
+    include:
+      - '*'
+
+pr:
+  branches:
+    include:
+      - '*'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+  MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+
+jobs:
+
+  - job: testAndBuild
+    displayName: 'Run tests and build maven artifacts'
+    container: maven:3.8.2-openjdk-17
+    condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')) # Always, except from when a tag is pushed
+    steps:
+
+      #Cache maven artifacts
+      - task: Cache@2
+        displayName: Cache Maven local repo
+        inputs:
+          key: 'maven | "$(Agent.OS)" | **/pom.xml'
+          restoreKeys: |
+            maven | "$(Agent.OS)"
+            maven
+          path: $(MAVEN_CACHE_FOLDER)
+
+      #Authenticate with maven
+      - task: MavenAuthenticate@0
+        displayName: 'Authenticate'
+        inputs:
+          mavenServiceConnections: 'mvnSsbBipPublic, mvnSsbBipReleases, mvnSsbBipSnapshots'
+
+      #Test and build
+      - task: Maven@3
+        displayName: 'Test and build'
+        inputs:
+          goals: 'verify test'
+          options: '-P ssb-bip --batch-mode'
+          mavenOptions: '$(MAVEN_OPTS)'
+
+      # Publish pipeline artifact
+      - publish: target
+        displayName: 'Publish artifact to pipeline'
+        artifact: target
+
+  - job: buildAndPushDockerImage
+    dependsOn: testAndBuild
+    displayName: 'Build and push docker image'
+    condition: and(ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceVersionMessage'], '[maven-release-plugin] prepare for next development iteration')))
+    steps:
+
+      # Download pipeline artifact
+      - download: current
+        displayName: 'Download pipeline artifact'
+        patterns: |
+          **/maskinporten-guardian-*.jar
+          **/logback*.xml
+        artifact: target
+
+      #Copy pipeline artifact into working directory
+      - bash: |
+          ls -latr $(Pipeline.Workspace)/target
+          cp -r $(Pipeline.Workspace)/target .
+          ls -latr target
+        displayName: 'Copy pipeline artifact into working directory'
+      #Docker login
+      - task: Docker@2
+        displayName: 'Docker login'
+        inputs:
+          command: 'login'
+          containerRegistry: 'gcrServiceConnection'
+
+      #Create image tag
+      - bash: |
+          BRANCH="$(Build.SourceBranchName)"
+          COMMIT_SHA="$(Build.SourceVersion)"
+          IMAGE_TAG="imagescan-${BRANCH}-${COMMIT_SHA:0:8}"
+          echo "Image tag: ${IMAGE_TAG}"
+          echo "##vso[task.setvariable variable=image_tag]${IMAGE_TAG}"
+        displayName: 'Create image tag'
+        failOnStderr: true
+      #Docker build and push
+      - task: Docker@2
+        displayName: 'Docker Build'
+        inputs:
+          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG)'
+          command: 'build'
+          Dockerfile: 'Dockerfile'
+          tags: 'imagescan-$(IMAGE_TAG)'
+      - task: Docker@2
+        displayName: 'Docker Push'
+        inputs:
+          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG)'
+          command: 'push'
+          containerRegistry: 'gcrServiceConnection'
+          tags: 'imagescan-$(IMAGE_TAG)'
+      - task: DownloadSecureFile@1
+        name: gcrJsonKey
+        inputs:
+          secureFile: 'gcr-key.json'
+      - script: |
+          echo "##vso[task.setvariable variable=GOOGLE_APPLICATION_CREDENTIALS]$(gcrJsonKey.secureFilePath)"
+        displayName: 'Set GCR Key'
+      - task: gcr-vulneralbility-check@1
+        inputs:
+          projectId: 'prod-bip'
+          imageHost: 'https://eu.gcr.io/'
+          image: 'prod-bip/ssb/dapla/maskinporten-guardian'
+          imageTag: 'imagescan-$(IMAGE_TAG)'
+          timeBetweenRetries: '10000'
+      - script: |
+          set -e
+          cat $(gcrJsonKey.secureFilePath) | docker login -u _json_key --password-stdin https://eu.gcr.io/
+          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:imagescan-$(IMAGE_TAG) eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
+          docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
+        displayName: 'Retag Image'
+        condition: succeeded()
+
+  - job: promoteToProduction
+    displayName: 'Tag production image'
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/') # Whenever a tag is pushed
+    steps:
+
+      # Download GCR credentials
+      - task: DownloadSecureFile@1
+        name: gcrJsonKey
+        displayName: 'Download GCR credentials'
+        inputs:
+          secureFile: 'gcr-key.json'
+
+      # Tag production image
+      - bash: |
+          regex="refs/tags/(.*)"
+          [[ $(Build.SourceBranch) =~ $regex ]]
+          RELEASE_TAG="${BASH_REMATCH[1]}"
+          COMMIT_SHA="$(Build.SourceVersion)"
+          CURRENT_TAG="master-${COMMIT_SHA:0:8}"
+          echo "Tagging image eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$CURRENT_TAG with $RELEASE_TAG"
+          cat $(gcrJsonKey.secureFilePath) | docker login -u _json_key --password-stdin https://eu.gcr.io
+          docker pull eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$CURRENT_TAG
+          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$CURRENT_TAG eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$RELEASE_TAG
+          docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$RELEASE_TAG
+        displayName: 'Tag production image'
