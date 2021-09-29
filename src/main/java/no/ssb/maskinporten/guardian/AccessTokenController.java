@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import no.ssb.maskinporten.guardian.config.MaskinportenClientConfig;
 import no.ssb.maskinporten.guardian.util.PrincipalUtil;
 
 import java.security.Principal;
@@ -43,12 +44,17 @@ public class AccessTokenController {
 
     @Error
     public HttpResponse<JsonError> maskinportenClientTokenRequestError(HttpRequest request, no.ks.fiks.maskinporten.error.MaskinportenClientTokenRequestException e) {
-        return error(request, e, HttpStatus.valueOf(e.getStatusCode()), e.getMessage() + " - " + e.getMaskinportenError());
+        return error(request, e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage() + " - " + e.getMaskinportenError());
     }
 
     @Error
     public HttpResponse<JsonError> clientUsageNotAuthorizedError(HttpRequest request, ClientAuthorizer.NotAuthorizedForMaskinportenClientUsageException e) {
-        return error(request, e, HttpStatus.UNAUTHORIZED, e.getMessage());
+        return error(request, e, HttpStatus.FORBIDDEN, e.getMessage());
+    }
+
+    @Error
+    public HttpResponse<JsonError> maskinportenClientNotFoundError(HttpRequest request, MaskinportenClientConfig.NotFoundException e) {
+        return error(request, e, HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     static HttpResponse<JsonError> error(HttpRequest request, Exception e, HttpStatus httpStatus, String httpStatusReason) {

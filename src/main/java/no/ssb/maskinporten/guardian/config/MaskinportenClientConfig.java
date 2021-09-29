@@ -32,7 +32,7 @@ public class MaskinportenClientConfig {
 
     public static class NotFoundException extends RuntimeException {
         public NotFoundException(String clientId) {
-            super("No maskingporten client configuration found for clientId=" + clientId +
+            super("No maskinporten client configuration found for clientId=" + clientId +
               ". Make sure the application.yml contains a config section for this client.");
         }
     }
