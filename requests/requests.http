@@ -20,3 +20,7 @@ GET {{maskinporten-guardian-baseurl}}/health/liveness
 ###
 
 GET {{maskinporten-guardian-baseurl}}/prometheus
+
+###
+
+GET {{maskinporten-guardian-baseurl}}/metrics

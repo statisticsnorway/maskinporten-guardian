@@ -1,5 +1,6 @@
 package no.ssb.maskinporten.guardian;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -28,14 +29,16 @@ public class AccessTokenController {
 
     private final MaskinportenService maskinportenService;
     private final ClientAuthorizer clientAuthorizer;
+    private final MeterRegistry meterRegistry;
 
     @Post("/access-token")
     public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, AccessTokenRequest request) {
         log.info("Request: {}", request);
         log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
+        meterRegistry.counter("guardian.access", "request", "token-fetch-attempt").increment();
         clientAuthorizer.validateMaskinportenClientUsageAuthorization(request.getMaskinportenClientId(), principal);
         String maskinportenAccessToken = maskinportenService.getAccessToken(request);
-
+        meterRegistry.counter("guardian.access", "request", "token-fetch-success").increment();
         return HttpResponse.ok(AccessTokenResponse.builder()
           .accessToken(maskinportenAccessToken)
           .build()
@@ -44,16 +47,19 @@ public class AccessTokenController {
 
     @Error
     public HttpResponse<JsonError> maskinportenClientTokenRequestError(HttpRequest request, no.ks.fiks.maskinporten.error.MaskinportenClientTokenRequestException e) {
+        meterRegistry.counter("guardian.error", "error", "token-request-error").increment();
         return error(request, e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage() + " - " + e.getMaskinportenError());
     }
 
     @Error
     public HttpResponse<JsonError> clientUsageNotAuthorizedError(HttpRequest request, ClientAuthorizer.NotAuthorizedForMaskinportenClientUsageException e) {
+        meterRegistry.counter("guardian.error", "error", "unauthorized-client-usage").increment();
         return error(request, e, HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @Error
     public HttpResponse<JsonError> maskinportenClientNotFoundError(HttpRequest request, MaskinportenClientConfig.NotFoundException e) {
+        meterRegistry.counter("guardian.error", "error", "maskinporten-client-config-not-found").increment();
         return error(request, e, HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
