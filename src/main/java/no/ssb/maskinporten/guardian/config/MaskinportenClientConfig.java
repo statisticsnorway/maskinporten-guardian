@@ -17,8 +17,8 @@ public class MaskinportenClientConfig {
     /** description is an optional string that describes some contextual information about the maskinporten client. Only used for documentation purposes. */
     private String description;
 
-    /** audience is the intended target for the JWT grant, ie. the identifier for Maskinporten. Defaults to `https://oidc-ver2.difi.no/idporten-oidc-provider/` */
-    private String audience = "https://oidc-ver2.difi.no/idporten-oidc-provider/";
+    /** audience is the intended target for the JWT grant, ie. the identifier for Maskinporten. Defaults to `https://ver2.maskinporten.no` */
+    private String audience = "https://ver2.maskinporten.no";
 
     /** numberOfSecondsLeftBeforeExpire is the max number of seconds that can span before acquired access tokens must be used. Defaults to 10. */
     private int numberOfSecondsLeftBeforeExpire = 10;
