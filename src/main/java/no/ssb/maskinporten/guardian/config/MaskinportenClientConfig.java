@@ -17,8 +17,8 @@ public class MaskinportenClientConfig {
     /** description is an optional string that describes some contextual information about the maskinporten client. Only used for documentation purposes. */
     private String description;
 
-    /** audience is the intended target for the JWT grant, ie. the identifier for Maskinporten. Defaults to `https://ver2.maskinporten.no` */
-    private String audience = "https://ver2.maskinporten.no";
+    /** audience is the intended target for the JWT grant, ie. the identifier for Maskinporten. *** MUST end with a slash (/) *** */
+    private String audience;
 
     /** numberOfSecondsLeftBeforeExpire is the max number of seconds that can span before acquired access tokens must be used. Defaults to 10. */
     private int numberOfSecondsLeftBeforeExpire = 10;
@@ -36,4 +36,13 @@ public class MaskinportenClientConfig {
               ". Make sure the application.yml contains a config section for this client.");
         }
     }
+
+    /**
+     * return the endpoint url at the maskinporten API that issues access tokens from JWT grants.
+     * See: https://docs.digdir.no/maskinporten_protocol_token.html
+     */
+    public String getTokenEndpoint() {
+        return audience + "token";
+    }
+
 }

@@ -54,7 +54,7 @@ public class MaskinportenClientFactory {
           .numberOfSecondsLeftBeforeExpire(clientConfig.getNumberOfSecondsLeftBeforeExpire())
           .issuer(clientId)
           .audience(clientConfig.getAudience())
-          .tokenEndpoint(maskinportenConfig.getTokenEndpoint())
+          .tokenEndpoint(clientConfig.getTokenEndpoint())
           .build());
         return maskinporten;
     }
