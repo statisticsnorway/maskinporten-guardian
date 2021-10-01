@@ -13,11 +13,6 @@ import java.util.stream.Collectors;
 @Data
 @Context
 public class MaskinportenConfig {
-    /**
-     * tokenEndpoint is the endpoint url at the maskinporten API that issues access tokens from JWT grants.
-     * See: https://docs.digdir.no/maskinporten_protocol_token.html
-     */
-    private String tokenEndpoint = "https://oidc-ver2.difi.no/idporten-oidc-provider/token";
 
     /** clients is a map of maskinporten client configurations */
     private final Map<String, MaskinportenClientConfig> clients;
