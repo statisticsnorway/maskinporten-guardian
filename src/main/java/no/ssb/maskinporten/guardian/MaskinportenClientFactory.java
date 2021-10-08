@@ -23,31 +23,16 @@ import java.security.cert.CertificateException;
 @RequiredArgsConstructor
 public class MaskinportenClientFactory {
 
-    private final SecretService secretService;
-    private final CertificateConfig certificateConfig;
+
     private final MaskinportenConfig maskinportenConfig;
-
-    private KeyStore loadKeyStore(char[] keyStorePassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        KeyStore keyStore = KeyStore.getInstance("pkcs12");
-        keyStore.load(fetchKeyStore(), keyStorePassword);
-        return keyStore;
-    }
-
-    InputStream fetchKeyStore() {
-        byte[] cert = secretService.getSecret(certificateConfig.getCertificateSecretId());
-        return new ByteArrayInputStream(cert);
-    }
-
-    char[] fetchKeyStorePassword() {
-        byte[] keyStorePassword = secretService.getSecret(certificateConfig.getCertificatePassphraseSecretId());
-        return new String(keyStorePassword, StandardCharsets.UTF_8).toCharArray();
-    }
+    private final MaskinPortenKeyStore maskinPortenKeyStore;
+    private final CertificateConfig certificateConfig;
 
     // TODO: Keep client instances in a timed cache?
     @SneakyThrows
     public Maskinportenklient maskinportenClient(String clientId) {
-        char[] keyStorePassword = fetchKeyStorePassword();
-        KeyStore keyStore = loadKeyStore(keyStorePassword);
+        char[] keyStorePassword = maskinPortenKeyStore.fetchKeyStorePassword();
+        KeyStore keyStore = maskinPortenKeyStore.loadKeyStore(keyStorePassword);
 
         MaskinportenClientConfig clientConfig = maskinportenConfig.getClientConfig(clientId);
         Maskinportenklient maskinporten = new Maskinportenklient(keyStore, certificateConfig.getCertificateKeystoreEntryAlias(), keyStorePassword, MaskinportenklientProperties.builder()
