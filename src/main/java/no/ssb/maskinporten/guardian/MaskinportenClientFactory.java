@@ -23,7 +23,6 @@ import java.security.cert.CertificateException;
 @RequiredArgsConstructor
 public class MaskinportenClientFactory {
 
-
     private final MaskinportenConfig maskinportenConfig;
     private final MaskinPortenKeyStore maskinPortenKeyStore;
     private final CertificateConfig certificateConfig;

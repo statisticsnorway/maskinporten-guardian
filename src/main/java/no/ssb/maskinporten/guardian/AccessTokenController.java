@@ -45,6 +45,8 @@ public class AccessTokenController {
         );
     }
 
+
+
     @Error
     public HttpResponse<JsonError> maskinportenClientTokenRequestError(HttpRequest request, no.ks.fiks.maskinporten.error.MaskinportenClientTokenRequestException e) {
         meterRegistry.counter("guardian.error", "error", "token-request-error").increment();
