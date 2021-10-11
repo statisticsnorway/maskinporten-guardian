@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import no.ks.fiks.maskinporten.Maskinportenklient;
 import no.ssb.maskinporten.guardian.config.MaskinportenClientConfig;
 import no.ssb.maskinporten.guardian.util.PrincipalUtil;
 
@@ -27,18 +28,22 @@ import java.util.Set;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class AccessTokenController {
 
-    private final MaskinportenService maskinportenService;
     private final ClientAuthorizer clientAuthorizer;
     private final MeterRegistry meterRegistry;
+    private final MaskinportenClientFactory maskinportenClientFactory;
 
     @Post("/access-token")
     public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, AccessTokenRequest request) {
         log.info("Request: {}", request);
         log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
-        meterRegistry.counter("guardian.access", "request", "token-fetch-attempt").increment();
+
+        // meterRegistry.counter("guardian.access", "request", "token-fetch-attempt").increment();
         clientAuthorizer.validateMaskinportenClientUsageAuthorization(request.getMaskinportenClientId(), principal);
-        String maskinportenAccessToken = maskinportenService.getAccessToken(request);
-        meterRegistry.counter("guardian.access", "request", "token-fetch-success").increment();
+
+        Maskinportenklient maskinportenClient = maskinportenClientFactory.maskinportenClient(request.getMaskinportenClientId());
+        String maskinportenAccessToken = maskinportenClient.getAccessToken(request.getScopes());
+       // meterRegistry.counter("guardian.access", "request", "token-fetch-success").increment();
+
         return HttpResponse.ok(AccessTokenResponse.builder()
           .accessToken(maskinportenAccessToken)
           .build()
