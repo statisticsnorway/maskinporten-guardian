@@ -29,7 +29,7 @@ Content-Type: application/json
 Authorization: Bearer {{dapla-access-token}}
 
 {
-  "maskinportenClientId": "{{mp-client-id-test}}",
+  "maskinportenClientId": "{{mp-client-id-skatt-naering}}",
   "scopes": [
     "skatteetaten:naeringsspesifikasjon"
   ]
