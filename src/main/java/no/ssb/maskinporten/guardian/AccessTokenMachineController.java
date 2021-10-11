@@ -6,6 +6,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
@@ -16,32 +17,28 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.ssb.maskinporten.guardian.config.MaskinportenClientConfig;
-import no.ssb.maskinporten.guardian.util.PrincipalUtil;
 
-import java.security.Principal;
 import java.util.Set;
 
 @Slf4j
-@Controller("/access-token")
+@Controller("/client")
 @RequiredArgsConstructor
-@Secured(SecurityRule.IS_AUTHENTICATED)
-public class AccessTokenController {
+public class AccessTokenMachineController {
 
     private final MaskinportenService maskinportenService;
-    private final ClientAuthorizer clientAuthorizer;
     private final MeterRegistry meterRegistry;
 
-    @Post
-    public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, AccessTokenRequest request) {
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @Post("/{clientID}")
+    public HttpResponse<AccessTokenResponse> fetchMaskinportenMachineAccessToken(AccessTokenRequest request, @PathVariable String clientID) {
         log.info("Request: {}", request);
-        log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
+        log.info("Client ID: {}", clientID);
         meterRegistry.counter("guardian.access", "request", "token-fetch-attempt").increment();
-        clientAuthorizer.validateMaskinportenClientUsageAuthorization(request.getMaskinportenClientId(), principal);
-        String maskinportenAccessToken = maskinportenService.getAccessToken(request);
+        String maskinportenAccessToken = maskinportenService.getMachineAccessToken(request, clientID);
         meterRegistry.counter("guardian.access", "request", "token-fetch-success").increment();
         return HttpResponse.ok(AccessTokenResponse.builder()
-          .accessToken(maskinportenAccessToken)
-          .build()
+                .accessToken(maskinportenAccessToken)
+                .build()
         );
     }
 
@@ -49,12 +46,6 @@ public class AccessTokenController {
     public HttpResponse<JsonError> maskinportenClientTokenRequestError(HttpRequest request, no.ks.fiks.maskinporten.error.MaskinportenClientTokenRequestException e) {
         meterRegistry.counter("guardian.error", "error", "token-request-error").increment();
         return error(request, e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage() + " - " + e.getMaskinportenError());
-    }
-
-    @Error
-    public HttpResponse<JsonError> clientUsageNotAuthorizedError(HttpRequest request, ClientAuthorizer.NotAuthorizedForMaskinportenClientUsageException e) {
-        meterRegistry.counter("guardian.error", "error", "unauthorized-client-usage").increment();
-        return error(request, e, HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @Error
@@ -73,7 +64,6 @@ public class AccessTokenController {
 
     @Data
     public static class AccessTokenRequest {
-        private String maskinportenClientId;
         private Set<String> scopes;
     }
 

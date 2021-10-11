@@ -18,4 +18,9 @@ public class MaskinportenService {
         return client.getAccessToken(request.getScopes());
     }
 
+    public String getMachineAccessToken(AccessTokenMachineController.AccessTokenRequest request, String clientID) {
+        Maskinportenklient client = maskinportenClientFactory.maskinportenClient(clientID);
+        return client.getAccessToken(request.getScopes());
+    }
+
 }
