@@ -93,6 +93,10 @@ class MaskinportenGuardianTest {
         doNothing().when(mockSuccessCounter).increment();
 
         accessTokenController.fetchMaskinportenAccessToken(principal, request);
+
+        Assertions.assertEquals(
+                mockAccessToken,
+                accessTokenController.fetchMaskinportenAccessToken(principal, request).body().getAccessToken());
     }
 
     void getKeyStoreAndCertificates() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
