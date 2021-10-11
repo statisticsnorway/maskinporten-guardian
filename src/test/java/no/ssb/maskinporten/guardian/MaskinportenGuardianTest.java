@@ -1,5 +1,6 @@
 package no.ssb.maskinporten.guardian;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -36,10 +37,13 @@ class MaskinportenGuardianTest {
     MeterRegistry meterRegistry;
 
     @Mock
-    ClientAuthorizer clientAuthorizer;
+    Counter mockAttemptCounter;
 
     @Mock
-    MaskinportenService maskinportenService;
+    Counter mockSuccessCounter;
+
+    @Mock
+    ClientAuthorizer clientAuthorizer;
 
     @Mock
     MaskinportenClientFactory maskinportenClientFactory;
@@ -82,6 +86,11 @@ class MaskinportenGuardianTest {
 
         when(maskinportenClientFactory.maskinportenClient(testClientId)).thenReturn(mockMaskinportenklient);
         when(mockMaskinportenklient.getAccessToken(request.getScopes())).thenReturn(mockAccessToken);
+        when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
+        when(meterRegistry.counter(  "guardian.access", "request", "token-fetch-success")).thenReturn(mockSuccessCounter);
+
+        doNothing().when(mockAttemptCounter).increment();
+        doNothing().when(mockSuccessCounter).increment();
 
         accessTokenController.fetchMaskinportenAccessToken(principal, request);
     }
@@ -90,5 +99,4 @@ class MaskinportenGuardianTest {
         keyStorePassword = maskinPortenKeyStore.fetchKeyStorePassword();
         keyStore = maskinPortenKeyStore.loadKeyStore(keyStorePassword);
     }
-
 }

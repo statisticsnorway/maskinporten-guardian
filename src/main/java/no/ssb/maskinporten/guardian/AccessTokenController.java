@@ -37,12 +37,12 @@ public class AccessTokenController {
         log.info("Request: {}", request);
         log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
 
-        // meterRegistry.counter("guardian.access", "request", "token-fetch-attempt").increment();
+        meterRegistry.counter("guardian.access", "request", "token-fetch-attempt").increment();
         clientAuthorizer.validateMaskinportenClientUsageAuthorization(request.getMaskinportenClientId(), principal);
 
         Maskinportenklient maskinportenClient = maskinportenClientFactory.maskinportenClient(request.getMaskinportenClientId());
         String maskinportenAccessToken = maskinportenClient.getAccessToken(request.getScopes());
-       // meterRegistry.counter("guardian.access", "request", "token-fetch-success").increment();
+        meterRegistry.counter("guardian.access", "request", "token-fetch-success").increment();
 
         return HttpResponse.ok(AccessTokenResponse.builder()
           .accessToken(maskinportenAccessToken)
