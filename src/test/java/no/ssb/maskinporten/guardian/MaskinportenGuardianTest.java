@@ -75,12 +75,7 @@ class MaskinportenGuardianTest {
         Set<String> scopes = new HashSet<>(Arrays.asList("scope:test"));
         String mockAccessToken = "ey678hmj7798nnlll54398bgc77dgh121876whgjhgfkhgfv";
 
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return "ssb-service-user-1";
-            }
-        };
+        Principal principal = () -> "ssb-service-user-1";
 
         AccessTokenController.AccessTokenRequest request = new AccessTokenController.AccessTokenRequest();
         request.setScopes(scopes);
