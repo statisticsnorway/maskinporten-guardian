@@ -2,6 +2,7 @@ package no.ssb.maskinporten.guardian;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import no.ks.fiks.maskinporten.Maskinportenklient;
@@ -15,6 +16,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -92,11 +94,13 @@ class MaskinportenGuardianTest {
         doNothing().when(mockAttemptCounter).increment();
         doNothing().when(mockSuccessCounter).increment();
 
-        accessTokenController.fetchMaskinportenAccessToken(principal, request);
+        io.micronaut.http.HttpResponse<AccessTokenController.AccessTokenResponse> response = accessTokenController.fetchMaskinportenAccessToken(principal, request);
 
+        Assertions.assertEquals(HttpStatus.OK, response.status());
+        Assertions.assertNotNull(response.body());
         Assertions.assertEquals(
                 mockAccessToken,
-                accessTokenController.fetchMaskinportenAccessToken(principal, request).body().getAccessToken());
+                response.body().getAccessToken());
     }
 
     void getKeyStoreAndCertificates() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
