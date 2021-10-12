@@ -16,7 +16,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -70,7 +69,7 @@ class MaskinportenGuardianTest {
     }
 
     @Test
-    void testGetAccesstoken(){
+    void testGetAccessToken(){
         String testClientId = "7ea43b76-6b7d-49e8-af2b-4114ebb66c80";
         Set<String> scopes = new HashSet<>(Arrays.asList("scope:test"));
         String mockAccessToken = "ey678hmj7798nnlll54398bgc77dgh121876whgjhgfkhgfv";
