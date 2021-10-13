@@ -32,7 +32,7 @@ class MaskinportenGuardianTest {
     EmbeddedApplication<?> application;
 
     @Inject
-    MaskinPortenKeyStore maskinPortenKeyStore;
+    MaskinportenKeyStore maskinportenKeyStore;
 
     @Mock
     MeterRegistry meterRegistry;
@@ -98,7 +98,7 @@ class MaskinportenGuardianTest {
     }
 
     void getKeyStoreAndCertificates() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        keyStorePassword = maskinPortenKeyStore.fetchKeyStorePassword();
-        keyStore = maskinPortenKeyStore.loadKeyStore(keyStorePassword);
+        keyStorePassword = maskinportenKeyStore.fetchKeyStorePassword();
+        keyStore = maskinportenKeyStore.loadKeyStore(keyStorePassword);
     }
 }

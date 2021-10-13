@@ -16,7 +16,7 @@ import java.security.cert.CertificateException;
 
 @Singleton
 @RequiredArgsConstructor
-public class MaskinPortenKeyStore {
+public class MaskinportenKeyStore {
     private final SecretService secretService;
     private final CertificateConfig certificateConfig;
 
