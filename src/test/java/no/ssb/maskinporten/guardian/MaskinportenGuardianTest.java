@@ -5,7 +5,9 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import net.jodah.expiringmap.internal.Assert;
 import no.ks.fiks.maskinporten.Maskinportenklient;
+import no.ssb.maskinporten.guardian.config.MaskinportenClientConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +45,7 @@ class MaskinportenGuardianTest {
     @Mock
     Counter mockSuccessCounter;
 
-    @Mock
+    @Inject
     ClientAuthorizer clientAuthorizer;
 
     @Mock
@@ -100,5 +102,47 @@ class MaskinportenGuardianTest {
     void getKeyStoreAndCertificates() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
         keyStorePassword = maskinportenKeyStore.fetchKeyStorePassword();
         keyStore = maskinportenKeyStore.loadKeyStore(keyStorePassword);
+    }
+
+    @Test
+    void testGetAccessTokenUnauthorizedAccess(){
+        String testClientId = "7ea43b76-6b7d-49e8-af2b-4114ebb66c80";
+        Set<String> scopes = new HashSet<>(Arrays.asList("scope:test"));
+
+        AccessTokenController.AccessTokenRequest request = new AccessTokenController.AccessTokenRequest();
+        request.setScopes(scopes);
+        request.setMaskinportenClientId(testClientId);
+
+        Principal principal = () -> "ssb-service-user-3";
+
+        when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
+
+        doNothing().when(mockAttemptCounter).increment();
+        accessTokenController = new AccessTokenController(clientAuthorizer, meterRegistry, maskinportenClientFactory);
+
+        Assertions.assertThrows(ClientAuthorizer.NotAuthorizedForMaskinportenClientUsageException.class, () -> {
+            accessTokenController.fetchMaskinportenAccessToken(principal, request);
+        });
+    }
+
+    @Test
+    void testGetAccessTokenInvalidId(){
+        String testClientId = "7ea43b76-6b7d-49e8-af2b-4114ebb66c80x";
+        Set<String> scopes = new HashSet<>(Arrays.asList("scope:test"));
+
+        AccessTokenController.AccessTokenRequest request = new AccessTokenController.AccessTokenRequest();
+        request.setScopes(scopes);
+        request.setMaskinportenClientId(testClientId);
+
+        Principal principal = () -> "ssb-service-user-1";
+
+        when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
+
+        doNothing().when(mockAttemptCounter).increment();
+        accessTokenController = new AccessTokenController(clientAuthorizer, meterRegistry, maskinportenClientFactory);
+
+        Assertions.assertThrows(MaskinportenClientConfig.NotFoundException.class, () -> {
+            accessTokenController.fetchMaskinportenAccessToken(principal, request);
+        });
     }
 }
