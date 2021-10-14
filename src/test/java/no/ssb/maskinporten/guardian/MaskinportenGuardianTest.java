@@ -1,6 +1,5 @@
 package no.ssb.maskinporten.guardian;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.test.annotation.MockBean;
