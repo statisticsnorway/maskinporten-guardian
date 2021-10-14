@@ -29,12 +29,6 @@ class MaskinportenGuardianTest {
     EmbeddedApplication<?> application;
 
     @Inject
-    ClientAuthorizer clientAuthorizer;
-
-    @Inject
-    MeterRegistry meterRegistry;
-
-    @Inject
     MaskinportenClientFactory maskinportenClientFactory;
 
     @Inject
