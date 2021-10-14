@@ -1,25 +1,20 @@
 package no.ssb.maskinporten.guardian;
 
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.EmbeddedApplication;
+import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import net.jodah.expiringmap.internal.Assert;
 import no.ks.fiks.maskinporten.Maskinportenklient;
 import no.ssb.maskinporten.guardian.config.MaskinportenClientConfig;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,36 +29,16 @@ class MaskinportenGuardianTest {
     EmbeddedApplication<?> application;
 
     @Inject
-    MaskinportenKeyStore maskinportenKeyStore;
-
-    @Mock
-    MeterRegistry meterRegistry;
-
-    @Mock
-    Counter mockAttemptCounter;
-
-    @Mock
-    Counter mockSuccessCounter;
-
-    @Inject
     ClientAuthorizer clientAuthorizer;
 
-    @Mock
+    @Inject
+    MeterRegistry meterRegistry;
+
+    @Inject
     MaskinportenClientFactory maskinportenClientFactory;
 
-    @Mock
-    Maskinportenklient mockMaskinportenklient;
-
-    @InjectMocks
+    @Inject
     AccessTokenController accessTokenController;
-
-    char[] keyStorePassword;
-    KeyStore keyStore;
-
-    @BeforeEach
-    void setup() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        getKeyStoreAndCertificates();
-    }
 
     @Test
     void testItWorks() {
@@ -76,19 +51,16 @@ class MaskinportenGuardianTest {
         Set<String> scopes = new HashSet<>(Arrays.asList("scope:test"));
         String mockAccessToken = "ey678hmj7798nnlll54398bgc77dgh121876whgjhgfkhgfv";
 
+        Maskinportenklient mockMaskinportenClient = mock(Maskinportenklient.class);
+
         Principal principal = () -> "ssb-service-user-1";
 
         AccessTokenController.AccessTokenRequest request = new AccessTokenController.AccessTokenRequest();
         request.setScopes(scopes);
         request.setMaskinportenClientId(testClientId);
 
-        when(maskinportenClientFactory.maskinportenClient(testClientId)).thenReturn(mockMaskinportenklient);
-        when(mockMaskinportenklient.getAccessToken(request.getScopes())).thenReturn(mockAccessToken);
-        when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
-        when(meterRegistry.counter(  "guardian.access", "request", "token-fetch-success")).thenReturn(mockSuccessCounter);
-
-        doNothing().when(mockAttemptCounter).increment();
-        doNothing().when(mockSuccessCounter).increment();
+        when(maskinportenClientFactory.maskinportenClient(testClientId)).thenReturn(mockMaskinportenClient);
+        when(mockMaskinportenClient.getAccessToken(request.getScopes())).thenReturn(mockAccessToken);
 
         io.micronaut.http.HttpResponse<AccessTokenController.AccessTokenResponse> response = accessTokenController.fetchMaskinportenAccessToken(principal, request);
 
@@ -97,11 +69,7 @@ class MaskinportenGuardianTest {
         Assertions.assertEquals(
                 mockAccessToken,
                 response.body().getAccessToken());
-    }
 
-    void getKeyStoreAndCertificates() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        keyStorePassword = maskinportenKeyStore.fetchKeyStorePassword();
-        keyStore = maskinportenKeyStore.loadKeyStore(keyStorePassword);
     }
 
     @Test
@@ -114,11 +82,6 @@ class MaskinportenGuardianTest {
         request.setMaskinportenClientId(testClientId);
 
         Principal principal = () -> "ssb-service-user-3";
-
-        when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
-
-        doNothing().when(mockAttemptCounter).increment();
-        accessTokenController = new AccessTokenController(clientAuthorizer, meterRegistry, maskinportenClientFactory);
 
         Assertions.assertThrows(ClientAuthorizer.NotAuthorizedForMaskinportenClientUsageException.class, () -> {
             accessTokenController.fetchMaskinportenAccessToken(principal, request);
@@ -136,13 +99,14 @@ class MaskinportenGuardianTest {
 
         Principal principal = () -> "ssb-service-user-1";
 
-        when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
-
-        doNothing().when(mockAttemptCounter).increment();
-        accessTokenController = new AccessTokenController(clientAuthorizer, meterRegistry, maskinportenClientFactory);
-
         Assertions.assertThrows(MaskinportenClientConfig.NotFoundException.class, () -> {
             accessTokenController.fetchMaskinportenAccessToken(principal, request);
         });
     }
+
+    @MockBean(MaskinportenClientFactory.class)
+    MaskinportenClientFactory maskinportenClientFactory(){
+        return mock(MaskinportenClientFactory.class);
+    }
+
 }
