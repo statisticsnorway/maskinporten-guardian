@@ -54,7 +54,6 @@ class MaskinportenGuardianTest {
     @Mock
     Maskinportenklient mockMaskinportenklient;
 
-    @InjectMocks
     AccessTokenController accessTokenController;
 
     char[] keyStorePassword;
@@ -63,6 +62,7 @@ class MaskinportenGuardianTest {
     @BeforeEach
     void setup() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
         getKeyStoreAndCertificates();
+        accessTokenController = new AccessTokenController(clientAuthorizer, meterRegistry, maskinportenClientFactory);
     }
 
     @Test
@@ -99,11 +99,6 @@ class MaskinportenGuardianTest {
                 response.body().getAccessToken());
     }
 
-    void getKeyStoreAndCertificates() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        keyStorePassword = maskinportenKeyStore.fetchKeyStorePassword();
-        keyStore = maskinportenKeyStore.loadKeyStore(keyStorePassword);
-    }
-
     @Test
     void testGetAccessTokenUnauthorizedAccess(){
         String testClientId = "7ea43b76-6b7d-49e8-af2b-4114ebb66c80";
@@ -118,7 +113,6 @@ class MaskinportenGuardianTest {
         when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
 
         doNothing().when(mockAttemptCounter).increment();
-        accessTokenController = new AccessTokenController(clientAuthorizer, meterRegistry, maskinportenClientFactory);
 
         Assertions.assertThrows(ClientAuthorizer.NotAuthorizedForMaskinportenClientUsageException.class, () -> {
             accessTokenController.fetchMaskinportenAccessToken(principal, request);
@@ -139,10 +133,14 @@ class MaskinportenGuardianTest {
         when(meterRegistry.counter("guardian.access", "request", "token-fetch-attempt")).thenReturn(mockAttemptCounter);
 
         doNothing().when(mockAttemptCounter).increment();
-        accessTokenController = new AccessTokenController(clientAuthorizer, meterRegistry, maskinportenClientFactory);
 
         Assertions.assertThrows(MaskinportenClientConfig.NotFoundException.class, () -> {
             accessTokenController.fetchMaskinportenAccessToken(principal, request);
         });
+    }
+
+    void getKeyStoreAndCertificates() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+        keyStorePassword = maskinportenKeyStore.fetchKeyStorePassword();
+        keyStore = maskinportenKeyStore.loadKeyStore(keyStorePassword);
     }
 }
