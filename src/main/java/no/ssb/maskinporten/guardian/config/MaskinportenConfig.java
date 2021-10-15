@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,12 +30,15 @@ public class MaskinportenConfig {
         }
     }
 
-    public MaskinportenClientConfig getClientConfig(String clientId) {
+    public Optional<MaskinportenClientConfig> getClientConfig(String clientId) {
+        return Optional.ofNullable(clients.get(clientId));
+/*
         if (! clients.containsKey(clientId)) {
             throw new MaskinportenClientConfig.NotFoundException(clientId);
         }
 
         return clients.get(clientId);
+*/
     }
 
 }

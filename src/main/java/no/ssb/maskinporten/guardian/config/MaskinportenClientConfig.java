@@ -17,14 +17,18 @@ public class MaskinportenClientConfig {
     /** description is an optional string that describes some contextual information about the maskinporten client. Only used for documentation purposes. */
     private String description;
 
+    // TODO: Validate ending slash using bean validation
     /** audience is the intended target for the JWT grant, ie. the identifier for Maskinporten. *** MUST end with a slash (/) *** */
     private String audience;
 
-    /** numberOfSecondsLeftBeforeExpire is the max number of seconds that can span before acquired access tokens must be used. Defaults to 10. */
-    private int numberOfSecondsLeftBeforeExpire = 10;
+    /** numberOfSecondsLeftBeforeExpire is the max number of seconds that can span before acquired access tokens must be used. Defaults to 120. */
+    private int numberOfSecondsLeftBeforeExpire = 120;
 
     /** authorizedUsers holds a set of users that are authorized to retrieve access tokens on behalf of this maskinporten client. */
     private Set<String> authorizedUsers = new HashSet<>();
+
+    /** defaultScopes holds a set of maskinporten scopes that will be used if not explicitly specified in the request to the guardian. */
+    private Set<String> defaultScopes = new HashSet<>();
 
     public MaskinportenClientConfig(@Parameter String clientId) {
         this.clientId = clientId;
