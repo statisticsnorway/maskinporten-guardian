@@ -15,7 +15,11 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /openapi/**
 
+  config-client:
+    enabled: true
+
   security:
+    enabled: true
     intercept-url-map:
       - pattern: /**/openapi/**
         httpMethod: GET
@@ -26,8 +30,6 @@ micronaut:
       jwt:
         signatures:
           jwks:
-            keycloak-prod:
-              url: 'https://keycloak.prod-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
             keycloak-staging:
               url: 'https://keycloak.staging-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
 
@@ -35,13 +37,14 @@ endpoints:
   prometheus:
     sensitive: false
 
+gcp:
+  project-id: dev-sirius
+  credentials:
+    location: private/sa/my-maskinporten-guardian-sa.json
+
 services:
   secrets:
-    impl: LOCAL
-    override-values:
-      ssb-dev-p12-passphrase: pass123
-    override-files:
-      ssb-dev-p12-certificate: src/test/resources/virksomhetssertifikat-test.p12
+    impl: GCP
 
 certificates:
   ssb-maskinporten-virksomhetssertifikat:

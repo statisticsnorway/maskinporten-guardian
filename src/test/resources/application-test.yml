@@ -23,13 +23,24 @@ services:
       ssb-dev-p12-certificate: src/test/resources/virksomhetssertifikat-test.p12
 
 certificates:
-  certificate-secret-id: ssb-dev-p12-certificate
-  certificate-passphrase-secret-id: ssb-dev-p12-passphrase
-  certificate-keystore-entry-alias: testalias
+  ssb-maskinporten-virksomhetssertifikat:
+    certificate-secret-id: ssb-dev-p12-certificate
+    certificate-passphrase-secret-id: ssb-dev-p12-passphrase
+    certificate-keystore-entry-alias: testalias
 
 maskinporten:
   clients:
     7ea43b76-6b7d-49e8-af2b-4114ebb66c80:
       description: client used for testing
+      audience: https://ver2.maskinporten.no/
       authorized-users:
         - kjell.fjell@ssb.no
+
+    675c0111-2035-4d15-9cce-037f55439e80:
+      description: client used for testing, with default scopes
+      audience: https://ver2.maskinporten.no/
+      authorized-users:
+        - kjell.fjell@ssb.no
+      default-scopes:
+        - some:scope1
+        - some:scope2

@@ -10,15 +10,15 @@
   <parent>
     <groupId>io.micronaut</groupId>
     <artifactId>micronaut-parent</artifactId>
-    <version>3.0.2</version>
+    <version>3.1.0</version>
   </parent>
 
   <properties>
     <packaging>jar</packaging>
     <jdk.version>17</jdk.version>
     <release.version>17</release.version>
-    <micronaut.version>3.0.2</micronaut.version>
-    <exec.mainClass>no.ssb.maskinporten.guardian.Application</exec.mainClass>
+    <micronaut.version>3.1.0</micronaut.version>
+    <exec.mainClass>no.ssb.guardian.Application</exec.mainClass>
     <micronaut.runtime>netty</micronaut.runtime>
   </properties>
 
@@ -153,6 +153,10 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt</artifactId>
       <version>0.9.1</version>
@@ -162,6 +166,18 @@
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>2.3.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>4.4.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>4.4.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -207,9 +223,14 @@
               <artifactId>micronaut-security-annotations</artifactId>
               <version>${micronaut.security.version}</version>
             </path>
+            <path>
+              <groupId>io.micronaut.openapi</groupId>
+              <artifactId>micronaut-openapi</artifactId>
+              <version>${micronaut.version}</version>
+            </path>
           </annotationProcessorPaths>
           <compilerArgs>
-            <arg>-Amicronaut.processing.group=no.ssb.maskinporten.guardian</arg>
+            <arg>-Amicronaut.processing.group=no.ssb.guardian.maskinporten.guardian</arg>
             <arg>-Amicronaut.processing.module=maskinporten-guardian</arg>
           </compilerArgs>
         </configuration>

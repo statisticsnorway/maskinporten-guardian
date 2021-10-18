@@ -1,4 +1,4 @@
-POST {{maskinporten-guardian-baseurl}}/access-token
+POST {{guardian-baseurl}}/maskinporten/access-token
 Content-Type: application/json
 Authorization: Bearer {{dapla-access-token}}
 
@@ -11,7 +11,7 @@ Authorization: Bearer {{dapla-access-token}}
 
 ###
 
-POST {{maskinporten-guardian-baseurl}}/access-token
+POST {{guardian-baseurl}}/maskinporten/access-token
 Content-Type: application/json
 Authorization: Bearer {{dapla-access-token}}
 
@@ -24,7 +24,7 @@ Authorization: Bearer {{dapla-access-token}}
 
 ###
 
-POST {{maskinporten-guardian-baseurl}}/access-token
+POST {{guardian-baseurl}}/maskinporten/access-token
 Content-Type: application/json
 Authorization: Bearer {{dapla-access-token}}
 
@@ -37,16 +37,16 @@ Authorization: Bearer {{dapla-access-token}}
 
 ###
 
-GET {{maskinporten-guardian-baseurl}}/health/readiness
+GET {{guardian-baseurl}}/health/readiness
 
 ###
 
-GET {{maskinporten-guardian-baseurl}}/health/liveness
+GET {{guardian-baseurl}}/health/liveness
 
 ###
 
-GET {{maskinporten-guardian-baseurl}}/prometheus
+GET {{guardian-baseurl}}/prometheus
 
 ###
 
-GET {{maskinporten-guardian-baseurl}}/metrics
+GET {{guardian-baseurl}}/metrics
