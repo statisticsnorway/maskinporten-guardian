@@ -230,7 +230,7 @@
             </path>
           </annotationProcessorPaths>
           <compilerArgs>
-            <arg>-Amicronaut.processing.group=no.ssb.guardian.maskinporten.guardian</arg>
+            <arg>-Amicronaut.processing.group=no.ssb.guardian</arg>
             <arg>-Amicronaut.processing.module=maskinporten-guardian</arg>
           </compilerArgs>
         </configuration>
