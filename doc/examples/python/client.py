@@ -63,7 +63,7 @@ if __name__ == '__main__':
           ]
     }
     """
-    guardian_endpoint = 'https://maskinporten-guardian-url/access-token'  # TODO: Set URL
+    guardian_endpoint = 'https://guardian-url/maskinporten/access-token'  # TODO: Set URL
     api_endpoint = 'https://target-api-url'  # TODO: Set URL
 
     api_response = call_endpoint(guardian_endpoint, api_endpoint, keycloak_token, body)
