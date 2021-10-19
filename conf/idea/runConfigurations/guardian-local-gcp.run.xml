@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="guardian-local-gcp" type="MicronautRunConfigurationType" factoryName="Micronaut">
+        <module name="maskinporten-guardian" />
+        <option name="alternativeJrePath" />
+        <option name="alternativeJrePathEnabled" value="false" />
+        <option name="includeProvidedScope" value="true" />
+        <option name="mainClass" value="no.ssb.guardian.Application" />
+        <option name="passParentEnvs" value="true" />
+        <option name="programParameters" value="" />
+        <option name="shortenCommandLine" />
+        <option name="vmParameters" value="" />
+        <option name="workingDirectory" value="$MODULE_DIR$" />
+        <envs>
+            <env name="MICRONAUT_CONFIG_FILES" value="conf/application-local-gcp.yml" />
+        </envs>
+        <method v="2">
+            <option name="Make" enabled="true" />
+        </method>
+    </configuration>
+</component>
