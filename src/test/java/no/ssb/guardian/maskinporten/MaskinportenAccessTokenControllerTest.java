@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @MicronautTest
-public class AccessTokenControllerTest {
+public class MaskinportenAccessTokenControllerTest {
 
     private final static String MASKINPORTEN_ACCESS_TOKEN_ENDPOINT = "/maskinporten/access-token";
     private final static String MASKINPORTEN_DUMMY_ACCESS_TOKEN = "maskinporten-dummy-token";
