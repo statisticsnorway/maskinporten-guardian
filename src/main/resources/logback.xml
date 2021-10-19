@@ -9,9 +9,6 @@
         </encoder>
     </appender>
 
-    <logger name="io.micronaut.security" level="TRACE"/>
-    <logger name="io.restassured" level="TRACE"/>
-
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
