@@ -1,6 +1,6 @@
 # Maskinporten Guardian
 
-<img align="right" src="doc/img/bridge-keeper-558x336.png">
+<img align="right" width="200" src="doc/img/bridge-keeper-558x336.png">
 
 Maskinporten Guardian allows SSB services and trusted users to retrieve
 [Maskinporten](https://samarbeid.digdir.no/maskinporten/dette-er-maskinporten/96) access tokens.
