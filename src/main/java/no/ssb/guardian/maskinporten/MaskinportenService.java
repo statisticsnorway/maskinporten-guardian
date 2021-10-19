@@ -5,10 +5,10 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import no.ssb.guardian.core.metrics.MetricsService;
 import no.ssb.guardian.maskinporten.client.MaskinportenClient;
 import no.ssb.guardian.maskinporten.client.MaskinportenClientRegistry;
 import no.ssb.guardian.maskinporten.config.MaskinportenClientConfig;
-import no.ssb.guardian.core.metrics.MetricsService;
 
 import java.util.Set;
 

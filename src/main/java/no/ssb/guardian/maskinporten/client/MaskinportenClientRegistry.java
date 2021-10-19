@@ -5,9 +5,9 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import no.ks.fiks.maskinporten.Maskinportenklient;
 import no.ks.fiks.maskinporten.MaskinportenklientProperties;
+import no.ssb.guardian.core.cert.CertificateConfig;
 import no.ssb.guardian.core.cert.KeyStoreService;
 import no.ssb.guardian.core.cert.KeyStoreService.KeyStoreWrapper;
-import no.ssb.guardian.core.cert.CertificateConfig;
 import no.ssb.guardian.maskinporten.config.MaskinportenClientConfig;
 
 import java.security.KeyStoreException;

@@ -18,12 +18,11 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import no.ssb.guardian.maskinporten.config.MaskinportenClientConfig;
-import no.ssb.guardian.maskinporten.config.MaskinportenConfig;
 import no.ssb.guardian.core.metrics.MetricsService;
 import no.ssb.guardian.core.util.PrincipalUtil;
+import no.ssb.guardian.maskinporten.config.MaskinportenClientConfig;
+import no.ssb.guardian.maskinporten.config.MaskinportenConfig;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Set;
 
