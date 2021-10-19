@@ -1,5 +1,6 @@
 # Maskinporten Guardian
 
+<img align="left" src="doc/img/guardian-120x204.png">
 Maskinporten Guardian allows SSB services to retrieve Maskinporten access tokens.
 
 ![Overview](doc/img/maskinporten-guardian-overview.png)
