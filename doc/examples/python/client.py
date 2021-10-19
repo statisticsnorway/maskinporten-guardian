@@ -18,7 +18,6 @@ def call_endpoint(api_endpoint, guardian_endpoint, keycloak_token, body):
             "ns:scope2"
         ]
     }
-
     :return: the endpoint json response
     """
     maskinporten_token = get_guardian_token(guardian_endpoint, keycloak_token, body)
@@ -30,7 +29,7 @@ def call_endpoint(api_endpoint, guardian_endpoint, keycloak_token, body):
     if api_response.status_code == 200:
         return api_response.json()
     else:
-        raise RuntimeError('Error calling target endpoint: %s' % api_response.text)
+        raise RuntimeError(f'Error calling target endpoint: <{api_response.status_code}: {api_response.text or api_response.reason}>')
 
 
 def get_guardian_token(guardian_endpoint, keycloak_token, body):
@@ -51,7 +50,7 @@ def get_guardian_token(guardian_endpoint, keycloak_token, body):
     if guardian_response.status_code == 200:
         return guardian_response.json()['accessToken']
     else:
-        raise RuntimeError('Error getting guardian token: %s' % guardian_response.text)
+        raise RuntimeError(f'Error getting guardian token: <{guardian_response.status_code}: {guardian_response.text or guardian_response.reason}>')
 
 
 if __name__ == '__main__':
