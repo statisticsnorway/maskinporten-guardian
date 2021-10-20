@@ -37,9 +37,9 @@ So, you want to become a trusted party? You will need to:
 2. You will need information about the API you want consume - including the required Maskinporten _data scopes_. This
    is typically something you will need to get from the API provider.
 
-3. The default and preferred way to access Maskinporten Guardian is via so called _Service Account Users_. These users
+3. The default and preferred way to access Maskinporten Guardian is via so-called _Service Account Users_. These users
    are associated with applications - not persons. Ask Team Argus or Team Stratus to help you create a _Service Account
-   User_ associated with your maskinporten client ID. You will get access to a keycloak service account user id and
+   User_ associated with your maskinporten client ID. You will get access to a keycloak service account user ID and
    password that can be used to retrieve a service account keycloak token.
 
    It is possible to access Maskinporten Guardian via your personal user account (using personal keycloak token) as
