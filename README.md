@@ -50,6 +50,11 @@ So, you want to become a trusted party? You will need to:
    a Maskinporten access tokens. Then, use the Maskinporten access token to query the API you want to consume.
 
 
+## Examples
+
+Have a look [here](doc/examples) for a collection of usage examples on how you can interact with Maskinporten Guardian.
+
+
 ## How does Maskinporten Guardian work
 
 A picture says approximately 1000 words:
