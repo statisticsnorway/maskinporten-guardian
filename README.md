@@ -1,6 +1,6 @@
 # Maskinporten Guardian
 
-<img align="right" width="200" src="doc/img/bridge-keeper-558x336.png">
+<img align="left" src="doc/img/guardian-120x204.png">
 
 Maskinporten Guardian allows SSB services and trusted users to retrieve
 [Maskinporten](https://samarbeid.digdir.no/maskinporten/dette-er-maskinporten/96) access tokens.
@@ -23,18 +23,36 @@ clients_ are configured to be trusted with a set of possible "data scopes" for w
 is a prerequisite that an agreement between the data-consuming organization (e.g., SSB) and the data-providing
 organizations (e.g., Skatteetaten) must be established in advance.
 
-
 ## How can I get access?
 
 > ~~None shall pass!~~ Only trustworthy ones shall pass!
+<img align="right" width="200" src="doc/img/bridge-keeper-558x336.png">
 
-<img align="left" src="doc/img/guardian-120x204.png">
+So, you want to become a trusted party? You will need to:
 
-So, you want to become a trusted party? Here are the requirements:
+1. Get hold of a maskinporten client ID associated with the API(s) that you want to consume. Administrators of
+   _Samhandlingsportalen_ can help you with this. If in doubt, post a question to Team Argus on the
+   #hjelp_dapla slack channel.
 
-1. Get hold of a maskinporten client - and a set of scopes for the API that you want to consume.
+2. You will need information about the API you want consume - including the required Maskinporten _data scopes_. This
+   is typically something you will need to get from the API provider.
 
-TODO
+3. The default and preferred way to access Maskinporten Guardian is via so called _Service Account Users_. These users
+   are associated with applications - not persons. Ask Team Argus or Team Stratus to help you create a _Service Account
+   User_ associated with your maskinporten client ID. You will get access to a keycloak service account user id and
+   password that can be used to retrieve a service account keycloak token.
+
+   It is possible to access Maskinporten Guardian via your personal user account (using personal keycloak token) as
+   well. In this case you will need to ask Team Argus to configure Maskinporten Guardian to trust your user account for
+   the maskinporten client ID.
+
+4. With your keycloak token (either a service account or a personal) you will be able to query Maskinporten Guardian for
+   a Maskinporten access tokens. Then, use the Maskinporten access token to query the API you want to consume.
+
+
+## How does Maskinporten Guardian work
+
+A picture says approximately 1000 words:
 
 ![Overview](doc/img/maskinporten-guardian-overview.png)
 
