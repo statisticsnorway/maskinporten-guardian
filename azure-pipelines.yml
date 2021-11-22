@@ -36,13 +36,6 @@ jobs:
             maven
           path: $(MAVEN_CACHE_FOLDER)
 
-      #      # Authenticate Maven to Nexus using predefined Service Connections
-      #      # (Project Settings->Pipelines->Service Connections)
-      #      - task: MavenAuthenticate@0
-      #        displayName: 'Maven authenticate'
-      #        inputs:
-      #          mavenServiceConnections: 'mvnSsbBipPublic, mvnSsbBipReleases, mvnSsbBipSnapshots'
-
       - task: DownloadSecureFile@1
         name: gcrJsonKey
         displayName: 'Download gcr creds'
@@ -64,110 +57,8 @@ jobs:
           options: '-P ssb-bip --batch-mode'
           mavenOptions: '$(MAVEN_OPTS)'
 
-      # Publish pipeline artifact
-      - publish: target
-        displayName: 'Publish artifact to pipeline'
-        artifact: target
+      #Maven caching to speed up pipeline build time
+      - template: maven/task-cache.yml@templates
 
-  - job: buildAndPushDockerImage
-    dependsOn: testAndBuild
-    displayName: 'Build and push docker image'
-    condition: and(ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceVersionMessage'], '[maven-release-plugin] prepare for next development iteration')))
-    steps:
-
-      # Download pipeline artifact
-      - download: current
-        displayName: 'Download pipeline artifact'
-        patterns: |
-          **/maskinporten-guardian-*.jar
-          **/logback*.xml
-        artifact: target
-
-      #Copy pipeline artifact into working directory
-      - bash: |
-          ls -latr $(Pipeline.Workspace)/target
-          cp -r $(Pipeline.Workspace)/target .
-          ls -latr target
-        displayName: 'Copy pipeline artifact into working directory'
-
-      #Create image tag
-      - bash: |
-          BRANCH="$(Build.SourceBranchName)"
-          COMMIT_SHA="$(Build.SourceVersion)"
-          IMAGE_TAG="${BRANCH}-${COMMIT_SHA:0:8}"
-          SCAN_IMAGE_TAG="imagescan-${IMAGE_TAG}"
-          echo "Image tag: ${IMAGE_TAG}"
-          echo "Scan image tag: ${SCAN_IMAGE_TAG}"
-          echo "##vso[task.setvariable variable=image_tag]${IMAGE_TAG}"
-          echo "##vso[task.setvariable variable=scan_image_tag]${SCAN_IMAGE_TAG}"
-        displayName: 'Create image tag'
-        failOnStderr: true
-      #Docker build
-      - task: Docker@2
-        displayName: 'Docker Build'
-        inputs:
-          repository: 'eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian'
-          command: 'build'
-          Dockerfile: 'Dockerfile'
-          tags: $(SCAN_IMAGE_TAG)
-      #Docker login
-      - task: Docker@2
-        displayName: 'Docker login'
-        inputs:
-          command: 'login'
-          containerRegistry: 'gcrServiceConnection'
-      #Docker push
-      - task: Docker@2
-        displayName: 'Docker Push'
-        inputs:
-          repository: 'prod-bip/ssb/dapla/maskinporten-guardian'
-          command: 'push'
-          containerRegistry: 'gcrServiceConnection'
-          tags: $(SCAN_IMAGE_TAG)
-      - task: DownloadSecureFile@1
-        name: gcrJsonKey
-        inputs:
-          secureFile: 'gcr-key.json'
-      - script: |
-          echo "##vso[task.setvariable variable=GOOGLE_APPLICATION_CREDENTIALS]$(gcrJsonKey.secureFilePath)"
-        displayName: 'Set GCR Key'
-      - task: gcr-vulneralbility-check@1
-        inputs:
-          projectId: 'prod-bip'
-          imageHost: 'https://eu.gcr.io/'
-          image: 'prod-bip/ssb/dapla/maskinporten-guardian'
-          imageTag: $(SCAN_IMAGE_TAG)
-          timeBetweenRetries: '10000'
-      - script: |
-          set -e
-          cat $(gcrJsonKey.secureFilePath) | docker login -u _json_key --password-stdin https://eu.gcr.io/
-          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(SCAN_IMAGE_TAG) eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
-          docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
-        displayName: 'Retag Image'
-        condition: succeeded()
-
-  - job: promoteToProduction
-    displayName: 'Tag production image'
-    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/') # Whenever a tag is pushed
-    steps:
-
-      # Download GCR credentials
-      - task: DownloadSecureFile@1
-        name: gcrJsonKey
-        displayName: 'Download GCR credentials'
-        inputs:
-          secureFile: 'gcr-key.json'
-
-      # Tag production image
-      - bash: |
-          regex="refs/tags/(.*)"
-          [[ $(Build.SourceBranch) =~ $regex ]]
-          RELEASE_TAG="${BASH_REMATCH[1]}"
-          COMMIT_SHA="$(Build.SourceVersion)"
-          CURRENT_TAG="master-${COMMIT_SHA:0:8}"
-          echo "Tagging image eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$CURRENT_TAG with $RELEASE_TAG"
-          cat $(gcrJsonKey.secureFilePath) | docker login -u _json_key --password-stdin https://eu.gcr.io
-          docker pull eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$CURRENT_TAG
-          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$CURRENT_TAG eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$RELEASE_TAG
-          docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$RELEASE_TAG
-        displayName: 'Tag production image'
+      # Deploy artifact to Nexus
+      - template: maven/task-install-and-deploy-to-nexus.yml@templates
