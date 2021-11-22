@@ -1,7 +1,9 @@
+name: $(Build.SourceBranch)-$(date:yyyyMMdd)$(rev:.r)
+# Pipeline triggers on any branch and tag
 trigger:
   branches:
     include:
-      - 'master'
+      - '*'
   tags:
     include:
       - '*'
@@ -11,13 +13,36 @@ pr:
     include:
       - '*'
 
+resources:
+  containers:
+  - container: 'ubuntu_container_for_build_deply_to_nexus'
+    image: 'ubuntu:latest'
+  repositories:
+  - repository: templates
+    type: github
+    name: statisticsnorway/azure-pipelines-templates
+    ref: refs/tags/1.1.18
+    endpoint: statisticsnorway (6)
+
+# Pipeline will be run on this base image
 pool:
   vmImage: 'ubuntu-latest'
 
+# Variables global to this pipeline
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables
 variables:
-  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
-  MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  # Variables defined in Pipelines->Library->Variable Groups in your project in
+  # Azure Pipelines
+  - group: Hemmeligheter
+  # Variables defined here
+  - name:  MAVEN_CACHE_FOLDER
+    value: $(Pipeline.Workspace)/.m2/repository
+  - name: MAVEN_OPTS
+    value: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
 
+
+
+# Job which runs mvn build, mvn install,
 jobs:
 
   - job: testAndBuild
@@ -25,16 +50,6 @@ jobs:
     container: maven:3.8.2-openjdk-17
     condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')) # Always, except from when a tag is pushed
     steps:
-
-      #Cache maven artifacts
-      - task: Cache@2
-        displayName: Cache Maven local repo
-        inputs:
-          key: 'maven | "$(Agent.OS)" | **/pom.xml'
-          restoreKeys: |
-            maven | "$(Agent.OS)"
-            maven
-          path: $(MAVEN_CACHE_FOLDER)
 
       - task: DownloadSecureFile@1
         name: gcrJsonKey
@@ -48,14 +63,6 @@ jobs:
           echo "Setting env variable GOOGLE_APPLICATION_CREDENTIALS"
           echo "##vso[task.setvariable variable=GOOGLE_APPLICATION_CREDENTIALS]$(gcrJsonKey.secureFilePath)"
         displayName: 'Setting GOOGLE_APPLICATION_CREDENTIALS env variable'
-
-      #Test and build
-      - task: Maven@3
-        displayName: 'Test and build'
-        inputs:
-          goals: 'verify test'
-          options: '-P ssb-bip --batch-mode'
-          mavenOptions: '$(MAVEN_OPTS)'
 
       #Maven caching to speed up pipeline build time
       - template: maven/task-cache.yml@templates
