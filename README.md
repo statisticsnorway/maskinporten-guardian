@@ -54,6 +54,14 @@ So, you want to become a trusted party? You will need to:
 
 Have a look [here](doc/examples) for a collection of usage examples on how you can interact with Maskinporten Guardian.
 
+The enclosed [postman collection](doc/examples/postman) demonstrates how you...
+* as a _service user_ can get hold of a keycloak access token
+* as a _service user_ can get hold of a maskinporten access token
+* as a _personal user_ can get hold of a maskinporten access token 
+
+Also, be sure to check out [Dapla Docs](https://docs.dapla.ssb.no/dapla-developer/auth-tokens) for complementary
+documentation on how you can get hold of access tokens.
+
 
 ## How does Maskinporten Guardian work
 

@@ -1,0 +1,335 @@
+{
+	"info": {
+		"_postman_id": "8917caf8-c3f4-49d1-92a8-b593f5080e35",
+		"name": "Maskinporten Guardian",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Personal",
+			"item": [
+				{
+					"name": "Health - readiness (Personal user)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{personal_keycloak_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://maskinporten-guardian.{{environment}}-bip-app.ssb.no/health/readiness",
+							"protocol": "https",
+							"host": [
+								"maskinporten-guardian",
+								"{{environment}}-bip-app",
+								"ssb",
+								"no"
+							],
+							"path": [
+								"health",
+								"readiness"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get maskinporten token (Personal user)",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{personal_keycloak_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"maskinportenClientId\": \"{{maskinporten_client_id}}\",\n  \"scopes\": {{api_scopes}}\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://maskinporten-guardian.{{environment}}-bip-app.ssb.no/maskinporten/access-token",
+							"protocol": "https",
+							"host": [
+								"maskinporten-guardian",
+								"{{environment}}-bip-app",
+								"ssb",
+								"no"
+							],
+							"path": [
+								"maskinporten",
+								"access-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service User",
+			"item": [
+				{
+					"name": "Health - readiness (Service user)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{service_keycloak_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://maskinporten-guardian.{{environment}}-bip-app.ssb.no/health/readiness",
+							"protocol": "https",
+							"host": [
+								"maskinporten-guardian",
+								"{{environment}}-bip-app",
+								"ssb",
+								"no"
+							],
+							"path": [
+								"health",
+								"readiness"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get keycloak token (Service user)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var CryptoJS = require(\"crypto-js\")",
+									"",
+									"let maskinportenClientId = pm.environment.get('maskinporten_client_id');",
+									"let keycloakClientSecret = pm.environment.get('service_keycloak_client_secret');",
+									"let clientCredentials = \"maskinporten-\" + maskinportenClientId + \":\" + keycloakClientSecret;",
+									"let base64ClientCredentials = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(clientCredentials));",
+									"",
+									"pm.environment.set(\"base64_encoded_keycloak_client_credentials\", base64ClientCredentials);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();",
+									"pm.environment.set(\"service_keycloak_token\", res.access_token);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{base64_encoded_keycloak_client_credentials}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://keycloak.{{environment}}-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/token",
+							"protocol": "https",
+							"host": [
+								"keycloak",
+								"{{environment}}-bip-app",
+								"ssb",
+								"no"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"ssb",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get maskinporten token - default scopes (Service user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();",
+									"pm.environment.set(\"maskinporten_token\", res.accessToken);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{service_keycloak_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://maskinporten-guardian.{{environment}}-bip-app.ssb.no/maskinporten/access-token",
+							"protocol": "https",
+							"host": [
+								"maskinporten-guardian",
+								"{{environment}}-bip-app",
+								"ssb",
+								"no"
+							],
+							"path": [
+								"maskinporten",
+								"access-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get maskinporten token - explicit scopes (Service user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();",
+									"pm.environment.set(\"maskinporten_token\", res.accessToken);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{service_keycloak_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"scopes\": {{api_scopes}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://maskinporten-guardian.{{environment}}-bip-app.ssb.no/maskinporten/access-token",
+							"protocol": "https",
+							"host": [
+								"maskinporten-guardian",
+								"{{environment}}-bip-app",
+								"ssb",
+								"no"
+							],
+							"path": [
+								"maskinporten",
+								"access-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
