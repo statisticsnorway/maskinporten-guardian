@@ -81,6 +81,11 @@ release                             Release a new version. Update POMs and tag t
 generate-test-virksomhetssertifikat Generate a "virksomhetssertifikat" for test
 ```
 
+## Usage examples
+
+[Here is an example](https://github.com/statisticsnorway/dapla-dev-cloud-functions/tree/master/guardian-token-retrieval) of a Google Cloud Function that gets a Keycloak token, then accesses Maskinporten Guardian to retrieve a Maskinporten token, used to retrieve a file from an API accessed with a Maskinporten token.
+
+[Here is an example](https://github.com/statisticsnorway/dapla-notebooks/tree/master/demo-2021-10-20) of the same flow un Jupyter.
 
 ## References
 
