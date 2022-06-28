@@ -55,7 +55,7 @@ public class MaskinportenClientRegistry {
                   .tokenEndpoint(maskinportenClientConfig.getTokenEndpoint())
                   .build());
                 return new MaskinportenClientImpl(klient);
-            } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException | CertificateException e) {
+            } catch (Exception e) {
                 throw new MaskinportenClientInitException("Error initializing " + Maskinportenklient.class.getName() + " for " + maskinportenClientConfig, e);
             }
         });
