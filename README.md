@@ -17,7 +17,7 @@ Maskinporten is a national, common solution providing secure authentication and 
 exchange between different Norwegian data providers. A [growing number](https://samarbeid.digdir.no/maskinporten/maskinporten/995)
 of APIs are being protected by Maskinporten.
 
-Access to Maskinporten is administered via _Samhandlingsportalen_. Organizations (e.g., SSB) that need to consume an
+Access to Maskinporten is administered via _[Samarbeidsportalen](https://samarbeid.digdir.no/)_. Organizations (e.g., SSB) that need to consume an
 API protected by Maskinporten will create a _maskinporten client_ in this administrative portal. The _maskinporten
 clients_ are configured to be trusted with a set of possible "data scopes" for which the client can retrieve data. It
 is a prerequisite that an agreement between the data-consuming organization (e.g., SSB) and the data-providing
@@ -31,7 +31,7 @@ organizations (e.g., Skatteetaten) must be established in advance.
 So, you want to become a trusted party? You will need to:
 
 1. Get hold of a maskinporten client ID associated with the API(s) that you want to consume. Administrators of
-   _Samhandlingsportalen_ can help you with this. If in doubt, post a question to Team Argus on the
+   _[Samarbeidsportalen](https://samarbeid.digdir.no/)_ can help you with this. If in doubt, post a question on the
    #hjelp_dapla slack channel.
 
 2. You will need information about the API you want consume - including the required Maskinporten _data scopes_. This
