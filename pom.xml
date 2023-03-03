@@ -9,7 +9,7 @@
   <parent>
     <groupId>io.micronaut</groupId>
     <artifactId>micronaut-parent</artifactId>
-    <version>3.5.2</version>
+    <version>3.5.5</version>
   </parent>
 
   <properties>
@@ -141,7 +141,7 @@
       <groupId>net.logstash.logback</groupId>
       <artifactId>logstash-logback-encoder</artifactId>
       <scope>runtime</scope>
-      <version>7.2</version>
+      <version>7.3</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
