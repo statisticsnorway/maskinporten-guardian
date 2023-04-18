@@ -151,7 +151,7 @@
     <dependency>
       <groupId>no.ks.fiks</groupId>
       <artifactId>maskinporten-client</artifactId>
-      <version>2.1.5</version>
+      <version>3.0.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
