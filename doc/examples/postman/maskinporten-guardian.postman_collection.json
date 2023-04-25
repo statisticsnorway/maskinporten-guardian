@@ -94,10 +94,10 @@
 			]
 		},
 		{
-			"name": "Service User",
+			"name": "M2M User",
 			"item": [
 				{
-					"name": "Health - readiness (Service user)",
+					"name": "Health - readiness (M2M user)",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -106,7 +106,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{service_keycloak_token}}",
+								"value": "Bearer {{m2m_keycloak_token}}",
 								"type": "text"
 							}
 						],
@@ -132,7 +132,7 @@
 					"response": []
 				},
 				{
-					"name": "Get keycloak token (Service user)",
+					"name": "Get keycloak token (M2M user)",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -141,7 +141,7 @@
 									"var CryptoJS = require(\"crypto-js\")",
 									"",
 									"let maskinportenClientId = pm.environment.get('maskinporten_client_id');",
-									"let keycloakClientSecret = pm.environment.get('service_keycloak_client_secret');",
+									"let keycloakClientSecret = pm.environment.get('m2m_keycloak_client_secret');",
 									"let clientCredentials = \"maskinporten-\" + maskinportenClientId + \":\" + keycloakClientSecret;",
 									"let base64ClientCredentials = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(clientCredentials));",
 									"",
@@ -156,7 +156,7 @@
 							"script": {
 								"exec": [
 									"const res = pm.response.json();",
-									"pm.environment.set(\"service_keycloak_token\", res.access_token);",
+									"pm.environment.set(\"m2m_keycloak_token\", res.access_token);",
 									"",
 									""
 								],
@@ -210,7 +210,7 @@
 					"response": []
 				},
 				{
-					"name": "Get maskinporten token - default scopes (Service user)",
+					"name": "Get maskinporten token - default scopes (M2M user)",
 					"event": [
 						{
 							"listen": "test",
@@ -234,7 +234,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{service_keycloak_token}}",
+								"value": "Bearer {{m2m_keycloak_token}}",
 								"type": "text"
 							},
 							{
@@ -270,7 +270,7 @@
 					"response": []
 				},
 				{
-					"name": "Get maskinporten token - explicit scopes (Service user)",
+					"name": "Get maskinporten token - explicit scopes (M2M user)",
 					"event": [
 						{
 							"listen": "test",
@@ -294,7 +294,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{service_keycloak_token}}",
+								"value": "Bearer {{m2m_keycloak_token}}",
 								"type": "text"
 							},
 							{

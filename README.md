@@ -30,24 +30,21 @@ organizations (e.g., Skatteetaten) must be established in advance.
 
 So, you want to become a trusted party? You will need to:
 
-1. Get hold of a maskinporten client ID associated with the API(s) that you want to consume. Administrators of
+1. Get hold of a Maskinporten client ID associated with the API(s) that you want to consume. Administrators of
    _[Samarbeidsportalen](https://samarbeid.digdir.no/)_ can help you with this. If in doubt, post a question on the
-   #hjelp_dapla slack channel.
-
-2. You will need information about the API you want consume - including the required Maskinporten _data scopes_. This
-   is typically something you will need to get from the API provider.
-
-3. The default and preferred way to access Maskinporten Guardian is via so-called _Service Account Users_. These users
-   are associated with applications - not persons. Ask Team Statistikktjenester to help you create a _Service Account
-   User_ associated with your maskinporten client ID. You will get access to a keycloak service account user ID and
-   password that can be used to retrieve a service account keycloak token.
+   #hjelp_dapla Slack channel.
+2. Obtain information about the Maskinporten _data scopes_ for the API you are consuming. The API provider should be able to supply this.
+3. The default and preferred way to access Maskinporten Guardian is via so-called _M2M Users_ (Machine-to-machine).
+4. These users are associated with applications - not persons. Ask _Team Statistikktjenester_ to help you create a
+   _Keycloak M2M User account_ associated with your Maskinporten client ID. They will give you a Keycloak M2M user ID and password
+   that can later be used to retrieve an M2M Keycloak token.
 
    It is possible to access Maskinporten Guardian via your personal user account (using personal keycloak token) as
-   well. In this case you will need to ask Team Argus to configure Maskinporten Guardian to trust your user account for
-   the maskinporten client ID.
+   well. In this case you will need to ask _Team Statistikktjenester_ to configure Maskinporten Guardian to trust your user account for
+   the Maskinporten client ID.
 
-4. With your keycloak token (either a service account or a personal) you will be able to query Maskinporten Guardian for
-   a Maskinporten access tokens. Then, use the Maskinporten access token to query the API you want to consume.
+5. With your Keycloak token (either M2M or personal) you will be able to query Maskinporten Guardian for
+   a Maskinporten access token. Then, use the Maskinporten access token to query the Maskinporten-protected API.
 
 
 ## Examples
@@ -55,8 +52,8 @@ So, you want to become a trusted party? You will need to:
 Have a look [here](doc/examples) for a collection of usage examples on how you can interact with Maskinporten Guardian.
 
 The enclosed [postman collection](doc/examples/postman) demonstrates how you...
-* as a _service user_ can get hold of a keycloak access token
-* as a _service user_ can get hold of a maskinporten access token
+* as an _M2M user_ can get hold of a keycloak access token
+* as an _M2M user_ can get hold of a maskinporten access token
 * as a _personal user_ can get hold of a maskinporten access token 
 
 Also, be sure to check out [Dapla Docs](https://docs.dapla.ssb.no/dapla-developer/auth-tokens) for complementary
