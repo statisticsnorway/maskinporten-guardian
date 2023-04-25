@@ -22,7 +22,7 @@ import static no.ssb.guardian.testsupport.KeycloakDevTokenIssuer.personalAccessT
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +52,7 @@ public class MaskinportenAccessTokenControllerTest {
         RestAssured.port = embeddedServer.getPort();
 
         MaskinportenClient maskinportenClient = mock(MaskinportenClient.class);
-        when(maskinportenClient.getAccessToken(anyCollection())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
+        when(maskinportenClient.getAccessToken(anySet())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
         when(maskinportenClientRegistry.get(any())).thenReturn(maskinportenClient);
     }
 
