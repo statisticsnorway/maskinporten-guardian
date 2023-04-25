@@ -183,6 +183,11 @@ public class MaskinportenAccessTokenController {
         return error(request, e, e.getHttpStatus(), e.getMessage());
     }
 
+    @Error
+    public HttpResponse<JsonError> runtimeError(HttpRequest request, RuntimeException e) {
+        metrics.incrementClientError("runtime-exception");
+        return error(request, e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
     private static HttpResponse<JsonError> error(HttpRequest request, Exception e, HttpStatus httpStatus, String httpStatusReason) {
         JsonError error = new JsonError(e.getMessage())
           .link(Link.SELF, Link.of(request.getUri()));
