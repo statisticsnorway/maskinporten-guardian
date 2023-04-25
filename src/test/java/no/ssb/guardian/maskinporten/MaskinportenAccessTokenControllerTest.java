@@ -23,8 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @MicronautTest
 public class MaskinportenAccessTokenControllerTest {
@@ -33,7 +32,6 @@ public class MaskinportenAccessTokenControllerTest {
     private final static String MASKINPORTEN_DUMMY_ACCESS_TOKEN = "maskinporten-dummy-token";
     private final static String MASKINPORTEN_CLIENT_ID_1 = "7ea43b76-6b7d-49e8-af2b-4114ebb66c80";
     private final static String MASKINPORTEN_CLIENT_ID_2 = "675c0111-2035-4d15-9cce-037f55439e80";
-    private final static Set<String> DEFAULT_SCOPES = Set.of("some:scope1", "some:scope2");
     private final static Set<String> REQUESTED_SCOPES = Set.of("some:scope1");
 
     @Inject
@@ -41,6 +39,8 @@ public class MaskinportenAccessTokenControllerTest {
 
     @Inject
     MaskinportenClientRegistry maskinportenClientRegistry;
+    private MaskinportenClient maskinportenClientMock = mock(MaskinportenClient.class);
+
 
     @MockBean(MaskinportenClientRegistry.class)
     MaskinportenClientRegistry maskinportenklientRegistry() {
@@ -50,10 +50,8 @@ public class MaskinportenAccessTokenControllerTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = embeddedServer.getPort();
-
-        MaskinportenClient maskinportenClient = mock(MaskinportenClient.class);
-        when(maskinportenClient.getAccessToken(anySet())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
-        when(maskinportenClientRegistry.get(any())).thenReturn(maskinportenClient);
+        when(maskinportenClientMock.getAccessToken(anySet())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
+        when(maskinportenClientRegistry.get(any())).thenReturn(maskinportenClientMock);
     }
 
     private String serviceAccountKeycloakToken() {
@@ -76,6 +74,7 @@ public class MaskinportenAccessTokenControllerTest {
           .body(
             "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
           );
+        verify(maskinportenClientMock, times(1)).getAccessToken(anySet());
     }
 
     @Test
@@ -91,6 +90,7 @@ public class MaskinportenAccessTokenControllerTest {
           .body(
             "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
           );
+        verify(maskinportenClientMock, times(1)).getAccessToken(anySet());
     }
 
     @Test
@@ -109,6 +109,7 @@ public class MaskinportenAccessTokenControllerTest {
           .body(
             "message", equalTo("maskinportenClientId cannot be explicitly specified for service account users")
           );
+        verifyNoInteractions(maskinportenClientMock);
     }
 
     @Test

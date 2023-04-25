@@ -9,6 +9,8 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.retry.annotation.RetryPredicate;
+import io.micronaut.retry.annotation.Retryable;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,7 @@ import no.ssb.guardian.core.util.PrincipalUtil;
 import no.ssb.guardian.maskinporten.config.MaskinportenClientConfig;
 import no.ssb.guardian.maskinporten.config.MaskinportenConfig;
 
+import java.net.SocketException;
 import java.security.Principal;
 import java.util.Set;
 
@@ -37,6 +40,7 @@ public class MaskinportenAccessTokenController {
     private final MaskinportenConfig maskinportenConfig;
 
     @Post("/maskinporten/access-token")
+    @Retryable(predicate = WrappedSocketExceptionRetryPredicate.class)
     public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, FetchMaskinportenAccessTokenRequest request) {
         log.info("Request: {}", request);
         log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
@@ -130,6 +134,17 @@ public class MaskinportenAccessTokenController {
 
     }
 
+    /**
+     * The {@link io.micronaut.retry.annotation.DefaultRetryPredicate} does not support wrapped exceptions, so, this
+     * prediate checks the exception {@code cause} for a {@link SocketException}.
+     */
+    public static class WrappedSocketExceptionRetryPredicate implements RetryPredicate {
+        @Override
+        public boolean test(Throwable throwable) {
+            return throwable.getCause() != null && throwable.getCause().getClass().equals(SocketException.class);
+        }
+    }
+
     @Data
     @NoArgsConstructor @AllArgsConstructor
     @Builder
@@ -168,6 +183,11 @@ public class MaskinportenAccessTokenController {
         return error(request, e, e.getHttpStatus(), e.getMessage());
     }
 
+    @Error
+    public HttpResponse<JsonError> runtimeError(HttpRequest request, RuntimeException e) {
+        metrics.incrementServerError("runtime-exception");
+        return error(request, e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
     private static HttpResponse<JsonError> error(HttpRequest request, Exception e, HttpStatus httpStatus, String httpStatusReason) {
         JsonError error = new JsonError(e.getMessage())
           .link(Link.SELF, Link.of(request.getUri()));
