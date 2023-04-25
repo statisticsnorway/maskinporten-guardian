@@ -52,7 +52,7 @@ public class MaskinportenAccessTokenControllerRetryTest {
 
     @Test
     void validRequest_shouldRetryOnConnectionError() {
-        when(maskinportenClientMock.getAccessToken(anyCollection()))
+        when(maskinportenClientMock.getAccessToken(anySet()))
                 .thenThrow(new RuntimeException(new SocketException(("Connection reset"))))
                 .thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
 
@@ -71,6 +71,6 @@ public class MaskinportenAccessTokenControllerRetryTest {
           .body(
               "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
           );
-        verify(maskinportenClientMock, times(2)).getAccessToken(anyCollection());
+        verify(maskinportenClientMock, times(2)).getAccessToken(anySet());
     }
 }
