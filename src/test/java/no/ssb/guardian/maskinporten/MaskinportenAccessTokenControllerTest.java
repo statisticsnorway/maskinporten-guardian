@@ -22,7 +22,7 @@ import static no.ssb.guardian.testsupport.KeycloakDevTokenIssuer.personalAccessT
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
@@ -50,7 +50,7 @@ public class MaskinportenAccessTokenControllerTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = embeddedServer.getPort();
-        when(maskinportenClientMock.getAccessToken(anyCollection())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
+        when(maskinportenClientMock.getAccessToken(anySet())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
         when(maskinportenClientRegistry.get(any())).thenReturn(maskinportenClientMock);
     }
 
@@ -74,7 +74,7 @@ public class MaskinportenAccessTokenControllerTest {
           .body(
             "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
           );
-        verify(maskinportenClientMock, times(1)).getAccessToken(anyCollection());
+        verify(maskinportenClientMock, times(1)).getAccessToken(anySet());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class MaskinportenAccessTokenControllerTest {
           .body(
             "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
           );
-        verify(maskinportenClientMock, times(1)).getAccessToken(anyCollection());
+        verify(maskinportenClientMock, times(1)).getAccessToken(anySet());
     }
 
     @Test
