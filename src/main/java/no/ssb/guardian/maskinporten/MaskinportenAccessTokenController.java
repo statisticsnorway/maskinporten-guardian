@@ -185,7 +185,7 @@ public class MaskinportenAccessTokenController {
 
     @Error
     public HttpResponse<JsonError> runtimeError(HttpRequest request, RuntimeException e) {
-        metrics.incrementClientError("runtime-exception");
+        metrics.incrementServerError("runtime-exception");
         return error(request, e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
     private static HttpResponse<JsonError> error(HttpRequest request, Exception e, HttpStatus httpStatus, String httpStatusReason) {
