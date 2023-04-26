@@ -40,7 +40,7 @@ public class MaskinportenAccessTokenController {
     private final MaskinportenConfig maskinportenConfig;
 
     @Post("/maskinporten/access-token")
-    @Retryable(predicate = WrappedSocketExceptionRetryPredicate.class)
+    @Retryable(attempts = "5", predicate = WrappedSocketExceptionRetryPredicate.class)
     public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, FetchMaskinportenAccessTokenRequest request) {
         log.info("Request: {}", request);
         log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
