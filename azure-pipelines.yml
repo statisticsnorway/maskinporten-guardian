@@ -141,8 +141,11 @@ jobs:
       - script: |
           set -e
           cat $(gcrJsonKey.secureFilePath) | docker login -u _json_key --password-stdin https://eu.gcr.io/
+          BUILD_TIMESTAMP=$(date '+%Y%m%d%H%M%S')
           docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(SCAN_IMAGE_TAG) eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
+          docker tag eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(SCAN_IMAGE_TAG) eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)-$BUILD_TIMESTAMP
           docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)
+          docker push eu.gcr.io/prod-bip/ssb/dapla/maskinporten-guardian:$(IMAGE_TAG)-$BUILD_TIMESTAMP
         displayName: 'Retag Image'
         condition: succeeded()
 
