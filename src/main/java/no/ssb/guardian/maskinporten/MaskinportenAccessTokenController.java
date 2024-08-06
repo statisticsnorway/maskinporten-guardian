@@ -12,6 +12,8 @@ import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.retry.annotation.RetryPredicate;
 import io.micronaut.retry.annotation.Retryable;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.serde.annotation.Serdeable;
@@ -41,6 +43,7 @@ public class MaskinportenAccessTokenController {
     private final MaskinportenService maskinportenService;
     private final MaskinportenConfig maskinportenConfig;
 
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Post("/maskinporten/access-token")
     @Retryable(attempts = "5", predicate = WrappedSocketExceptionRetryPredicate.class)
     public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, @Body FetchMaskinportenAccessTokenRequest request) {
