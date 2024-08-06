@@ -10,10 +10,6 @@ import no.ssb.guardian.core.cert.KeyStoreService;
 import no.ssb.guardian.core.cert.KeyStoreService.KeyStoreWrapper;
 import no.ssb.guardian.maskinporten.config.MaskinportenClientConfig;
 
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 

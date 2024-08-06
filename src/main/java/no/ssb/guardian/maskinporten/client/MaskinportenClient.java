@@ -1,6 +1,5 @@
 package no.ssb.guardian.maskinporten.client;
 
-import java.util.Collection;
 import java.util.Set;
 
 public interface MaskinportenClient {

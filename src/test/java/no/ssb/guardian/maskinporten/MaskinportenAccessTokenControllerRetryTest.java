@@ -16,12 +16,11 @@ import org.junit.jupiter.api.Test;
 import java.net.SocketException;
 import java.util.Set;
 
-import static io.restassured.RestAssured.*;
-import static no.ssb.guardian.testsupport.KeycloakDevTokenIssuer.*;
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.given;
+import static no.ssb.guardian.testsupport.KeycloakDevTokenIssuer.personalAccessToken;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.*;
 
 @MicronautTest

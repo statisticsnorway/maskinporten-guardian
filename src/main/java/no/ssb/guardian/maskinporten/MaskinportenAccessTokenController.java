@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Post;
@@ -13,6 +14,7 @@ import io.micronaut.retry.annotation.RetryPredicate;
 import io.micronaut.retry.annotation.Retryable;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,7 +43,7 @@ public class MaskinportenAccessTokenController {
 
     @Post("/maskinporten/access-token")
     @Retryable(attempts = "5", predicate = WrappedSocketExceptionRetryPredicate.class)
-    public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, FetchMaskinportenAccessTokenRequest request) {
+    public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, @Body FetchMaskinportenAccessTokenRequest request) {
         log.info("Request: {}", request);
         log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
 
@@ -148,6 +150,7 @@ public class MaskinportenAccessTokenController {
     @Data
     @NoArgsConstructor @AllArgsConstructor
     @Builder
+    @Serdeable
     public static class FetchMaskinportenAccessTokenRequest {
         private String maskinportenClientId;
         private Set<String> scopes;
@@ -155,6 +158,7 @@ public class MaskinportenAccessTokenController {
 
     @Data
     @Builder
+    @Serdeable
     static class AccessTokenResponse {
         private String accessToken;
     }
