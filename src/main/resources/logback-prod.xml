@@ -6,6 +6,8 @@
         </encoder>
     </appender>
 
+    <logger name="io.micronaut.http.client.netty.DefaultHttpClient" level="ERROR" />
+
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
