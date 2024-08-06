@@ -2,10 +2,10 @@ package no.ssb.guardian.maskinporten.config;
 
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 

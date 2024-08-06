@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import no.ks.fiks.maskinporten.AccessTokenRequest;
 import no.ks.fiks.maskinporten.Maskinportenklient;
 
-import java.util.Collection;
 import java.util.Set;
 
 @RequiredArgsConstructor

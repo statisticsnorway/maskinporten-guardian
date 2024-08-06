@@ -22,7 +22,7 @@ jobs:
 
   - job: testAndBuild
     displayName: 'Run tests and build maven artifacts'
-    container: maven:3.8.2-openjdk-17
+    container: maven:3.9-eclipse-temurin-21
     condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')) # Always, except from when a tag is pushed
     steps:
 
