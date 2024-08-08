@@ -1,13 +1,11 @@
 package no.ssb.guardian.maskinporten.client;
 
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import no.ks.fiks.maskinporten.Maskinportenklient;
 import no.ks.fiks.maskinporten.MaskinportenklientProperties;
-import no.ssb.guardian.core.cert.CertificateConfig;
-import no.ssb.guardian.core.cert.KeyStoreService;
-import no.ssb.guardian.core.cert.KeyStoreService.KeyStoreWrapper;
+import no.ssb.guardian.core.cert.CertificateService;
 import no.ssb.guardian.maskinporten.config.MaskinportenClientConfig;
 
 import java.util.HashMap;
@@ -22,12 +20,10 @@ import java.util.Map;
  */
 @Singleton
 @RequiredArgsConstructor
+@Slf4j
 public class MaskinportenClientRegistry {
 
-    @Named("ssb-maskinporten-virksomhetssertifikat")
-    private final CertificateConfig certificateConfig;
-
-    private final KeyStoreService keyStoreService;
+    private final CertificateService certificateService;
 
     private final Map<String, MaskinportenClient> registry = new HashMap<>();
 
@@ -41,24 +37,25 @@ public class MaskinportenClientRegistry {
      */
     public MaskinportenClient get(MaskinportenClientConfig maskinportenClientConfig) {
         return registry.computeIfAbsent(maskinportenClientConfig.getClientId(), maskinportenClientId -> {
-            KeyStoreWrapper ks = loadKeyStore();
-
             try {
-                Maskinportenklient klient = new Maskinportenklient(ks.getKeyStore(), ks.getAlias(), ks.getKeyStorePassword(), MaskinportenklientProperties.builder()
-                  .numberOfSecondsLeftBeforeExpire(maskinportenClientConfig.getNumberOfSecondsLeftBeforeExpire())
-                  .issuer(maskinportenClientId)
-                  .audience(maskinportenClientConfig.getAudience())
-                  .tokenEndpoint(maskinportenClientConfig.getTokenEndpoint())
-                  .build());
+                CertificateService.CertificateWrapper cw = certificateService.loadCertificate();
+                certificateService.validateCertificateExpiry(cw.getCertificate());
+
+                Maskinportenklient klient = Maskinportenklient.builder()
+                        .withPrivateKey(cw.getPrivateKey())
+                        .withProperties(MaskinportenklientProperties.builder()
+                                .numberOfSecondsLeftBeforeExpire(maskinportenClientConfig.getNumberOfSecondsLeftBeforeExpire())
+                                .issuer(maskinportenClientId)
+                                .audience(maskinportenClientConfig.getAudience())
+                                .tokenEndpoint(maskinportenClientConfig.getTokenEndpoint())
+                                .build())
+                        .usingVirksomhetssertifikat(cw.getCertificate())
+                        .build();
                 return new MaskinportenClientImpl(klient);
             } catch (Exception e) {
                 throw new MaskinportenClientInitException("Error initializing " + Maskinportenklient.class.getName() + " for " + maskinportenClientConfig, e);
             }
         });
-    }
-
-    KeyStoreWrapper loadKeyStore() {
-        return keyStoreService.load(certificateConfig.getCertificateSecretId(), certificateConfig.getCertificatePassphraseSecretId(), certificateConfig.getCertificateKeystoreEntryAlias());
     }
 
     public static class MaskinportenClientInitException extends RuntimeException {
