@@ -25,6 +25,7 @@
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
     <maven-checkstyle-plugin.version>3.4.0</maven-checkstyle-plugin.version>
+    <inject-maven-plugin.version>1.7</inject-maven-plugin.version>
   </properties>
 
   <scm>
@@ -159,9 +160,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.26.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.11.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -302,7 +308,6 @@
           </compilerArgs>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -310,7 +315,6 @@
           <argLine>-XX:+EnableDynamicAgentLoading</argLine>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
@@ -319,7 +323,33 @@
           <tagNameFormat>@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
-
+      <plugin>
+        <groupId>de.m3y.maven</groupId>
+        <artifactId>inject-maven-plugin</artifactId>
+        <version>${inject-maven-plugin.version}</version>
+        <configuration>
+          <injections>
+            <injection>
+              <value>${project.version}</value>
+              <pointCuts>
+                <pointCut>no.ssb.guardian.BuildInfo.getVersion</pointCut>
+              </pointCuts>
+            </injection>
+            <injection>
+              <value>${maven.build.timestamp}</value>
+              <pointCut>no.ssb.guardian.BuildInfo.getBuildTimestamp</pointCut>
+            </injection>
+          </injections>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>inject</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -349,7 +379,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
 
