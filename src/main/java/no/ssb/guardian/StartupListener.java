@@ -19,7 +19,7 @@ public class StartupListener implements ApplicationEventListener<ApplicationStar
     public void onApplicationEvent(ApplicationStartupEvent event) {
         log.info("Micronaut version {}", VersionUtils.getMicronautVersion());
         log.info("Guardian version {}", BuildInfo.INSTANCE.getVersionAndBuildTimestamp());
-        log.info("Certificate expiry date: {}", certificateService.validateCertificateExpiry().getExpiryDate());
+        log.info("Certificate expiry date: {}", certificateService.validateCertificate().getExpiryDate());
     }
 
 }

@@ -39,7 +39,7 @@ public class MaskinportenClientRegistry {
         return registry.computeIfAbsent(maskinportenClientConfig.getClientId(), maskinportenClientId -> {
             try {
                 CertificateService.CertificateWrapper cw = certificateService.loadCertificate();
-                certificateService.validateCertificateExpiry(cw.getCertificate());
+                certificateService.validateCertificate(cw.getCertificate());
 
                 Maskinportenklient klient = Maskinportenklient.builder()
                         .withPrivateKey(cw.getPrivateKey())

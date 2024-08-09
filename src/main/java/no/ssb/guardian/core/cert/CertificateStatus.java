@@ -5,11 +5,11 @@ import lombok.Value;
 import java.util.Date;
 
 @Value
-public class CertificateValidity {
-    enum Status {
+public class CertificateStatus {
+    enum Condition {
         OK, WARN, ERROR, FATAL
     }
-    Status status;
+    Condition condition;
     Date expiryDate;
     String message;
 }

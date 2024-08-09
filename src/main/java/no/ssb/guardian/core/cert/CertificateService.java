@@ -41,27 +41,29 @@ public class CertificateService {
         return keyStoreService.load(certificateConfig.getCertificateSecretId(), certificateConfig.getCertificatePassphraseSecretId(), certificateConfig.getCertificateKeystoreEntryAlias());
     }
 
-    public CertificateValidity validateCertificateExpiry() {
-        CertificateValidity validity = getCertificateValidity();
-        return validateCertificateExpiry(validity);
+    public CertificateStatus validateCertificate() {
+        CertificateStatus validity = getCertificateStatus();
+        return validateCertificate(validity);
     }
 
-    public CertificateValidity validateCertificateExpiry(X509Certificate certificate) {
-        CertificateValidity validity = getCertificateValidity(certificate);
-        return validateCertificateExpiry(validity);
+    public CertificateStatus validateCertificate(X509Certificate certificate) {
+        CertificateStatus validity = getCertificateStatus(certificate);
+        return validateCertificate(validity);
     }
 
-    CertificateValidity validateCertificateExpiry(CertificateValidity validity) {
-        switch (validity.getStatus()) {
+    CertificateStatus validateCertificate(CertificateStatus validity) {
+        switch (validity.getCondition()) {
             case OK:
                 log.trace("Certificate is OK, expiry date: {}", validity.getExpiryDate());
                 break;
 
             case WARN:
                 log.warn(validity.getMessage());
+                break;
 
             case ERROR:
                 log.error(validity.getMessage());
+                break;
 
             case FATAL:
                 log.error(validity.getMessage());
@@ -71,31 +73,31 @@ public class CertificateService {
         return validity;
     }
 
-    CertificateValidity getCertificateValidity() {
-        return getCertificateValidity(loadCertificate().getCertificate());
+    CertificateStatus getCertificateStatus() {
+        return getCertificateStatus(loadCertificate().getCertificate());
     }
 
-    CertificateValidity getCertificateValidity(X509Certificate cert) {
+    CertificateStatus getCertificateStatus(X509Certificate cert) {
         Date expiryDate = cert.getNotAfter();
         LocalDate expiryLocalDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate now = LocalDate.now();
         if (expiryLocalDate.isBefore(now)) {
-            return new CertificateValidity(CertificateValidity.Status.FATAL, expiryDate,
+            return new CertificateStatus(CertificateStatus.Condition.FATAL, expiryDate,
                     "!!!ACTION REQUIRED!!! The certificate used for signing Maskinporten requests (SSB Virksomhetssertifikat) is expired (%s)."
                             .formatted(expiryDate));
         }
         else if (expiryLocalDate.isBefore(now.plusMonths(1))) {
-            return new CertificateValidity(CertificateValidity.Status.ERROR, expiryDate,
+            return new CertificateStatus(CertificateStatus.Condition.ERROR, expiryDate,
                     "!!!ACTION REQUIRED!!! The certificate used for signing Maskinporten requests (SSB Virksomhetssertifikat) is about to expire (%s)."
                             .formatted(expiryDate));
         }
         else if (expiryLocalDate.isBefore(now.plusMonths(3))) {
-            return new CertificateValidity(CertificateValidity.Status.WARN, expiryDate,
+            return new CertificateStatus(CertificateStatus.Condition.WARN, expiryDate,
                     "The certificate used for signing Maskinporten requests (SSB Virksomhetssertifikat) expires soon (%s). It should be updated ASAP."
                             .formatted(expiryDate));
         }
         else {
-            return new CertificateValidity(CertificateValidity.Status.OK, expiryDate,"OK");
+            return new CertificateStatus(CertificateStatus.Condition.OK, expiryDate,"OK");
         }
     }
 
