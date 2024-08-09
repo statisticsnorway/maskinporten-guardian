@@ -47,7 +47,7 @@ public class MaskinportenAccessTokenController {
     @Post("/maskinporten/access-token")
     @Retryable(attempts = "5", predicate = WrappedSocketExceptionRetryPredicate.class)
     public HttpResponse<AccessTokenResponse> fetchMaskinportenAccessToken(Principal principal, @Body FetchMaskinportenAccessTokenRequest request) {
-        log.info("Request: {}", request);
+        log.debug("Request: {}", request);
         log.info("AUDIT {}", PrincipalUtil.auditInfoOf(principal));
 
         metrics.incrementRequestAccess("token-fetch-attempt");
