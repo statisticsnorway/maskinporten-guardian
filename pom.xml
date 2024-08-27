@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>no.ssb.maskinporten</groupId>
   <artifactId>maskinporten-guardian</artifactId>
-  <version>1.3.1</version>
+  <version>1.3.2-SNAPSHOT</version>
   <packaging>${packaging}</packaging>
 
   <parent>
@@ -31,7 +31,7 @@
     <connection>scm:git:git://github.com/statisticsnorway/maskinporten-guardian.git</connection>
     <developerConnection>scm:git:git@github.com:statisticsnorway/maskinporten-guardian.git</developerConnection>
     <url>https://github.com/statisticsnorway/maskinporten-guardian</url>
-    <tag>1.3.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
