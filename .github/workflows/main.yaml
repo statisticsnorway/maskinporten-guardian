@@ -36,8 +36,12 @@ jobs:
     outputs:
       image-tag: ${{ env.DOCKER_IMAGE }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Setup Maven Action # Composite action
+        uses: s4u/setup-maven-action@v1.7.0
+        with:
+          java-version: 21
+          java-distribution: zulu
+          maven-version: 3.9.9
 
       - name: Set docker image env var
         run: |
@@ -56,14 +60,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
-
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 21
-          distribution: 'zulu'
-          cache: maven
 
       - name: Build with Maven and deploy to Artifact Registry
         run: mvn --batch-mode -P ssb-bip deploy
