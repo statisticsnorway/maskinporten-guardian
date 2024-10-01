@@ -17,7 +17,16 @@ name: Image Build and Deploy
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
+    paths:
+      - .github/**
+      - src/**
+      - conf/**
+      - Dockerfile
+      - pom.xml
+  release:
+    types: [ published ]
   workflow_dispatch:
 
 env:
@@ -118,9 +127,31 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v2
+
+      - name: Deploy to dev
+        if: ${{ github.event_name != 'release' }}
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev
+          RESOURCE: .nais/dev.yaml
+          VAR: image=${{ needs.docker-build.outputs.image }}:latest
+          DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
+
+      - name: Deploy to test
+        if: ${{ github.event_name != 'release' }}
+        uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: test
           RESOURCE: .nais/test.yaml
-          VAR: image=${{ needs.docker-build.outputs.image }}@${{ needs.docker-build.outputs.image-digest }}
+          VAR: image=${{ needs.docker-build.outputs.image }}:latest
+          DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
+      
+      - name: Deploy to prod
+        if: ${{ github.event_name == 'release' }}
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod
+          RESOURCE: .nais/prod.yaml
+          ## github.event.ref
+          VAR: image=${{ needs.docker-build.outputs.image }}:${{github.event.ref}}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
