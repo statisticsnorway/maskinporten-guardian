@@ -149,6 +149,6 @@ jobs:
         env:
           CLUSTER: prod
           RESOURCE: .nais/prod.yaml
-          ## github.event.ref
           VAR: image=${{ needs.docker-build.outputs.image }}:${{github.event.ref}}
+          ## github.event.ref = release version (e.g. v3.2.4)
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
