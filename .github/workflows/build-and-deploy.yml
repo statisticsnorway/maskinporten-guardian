@@ -117,23 +117,6 @@ jobs:
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-
-  deploy-dev:
-    name: Deploy to NAIS development cluster
-    if: ${{ github.event_name != 'release' }}
-    runs-on: ubuntu-latest
-    needs: docker-build
-    permissions:
-      contents: "read"
-      id-token: "write"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: dev
-          RESOURCE: .nais/dev.yaml
-          VAR: image=${{ needs.docker-build.outputs.image }}:latest
-          DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
   
   deploy-test:
     name: Deploy to NAIS test cluster
