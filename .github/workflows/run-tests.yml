@@ -3,6 +3,8 @@ name: Run tests
 
 on:
   push:
+    branches:
+      - '!release'
     paths-ignore:
       - README.md
 
