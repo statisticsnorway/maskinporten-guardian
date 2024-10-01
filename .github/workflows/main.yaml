@@ -18,6 +18,7 @@ name: Image Build and Deploy
 on:
   push:
     branches: [ "master" ]
+  workflow_dispatch:
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker/maskinporten-guardian
