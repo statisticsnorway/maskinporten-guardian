@@ -434,11 +434,11 @@
       <distributionManagement>
         <snapshotRepository>
           <id>artifact-registry</id>
-          <url>europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-maven/maskinporten-guardian</url>
+          <url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dapla-stat-maven/maskinporten-guardian</url>
         </snapshotRepository>
         <repository>
           <id>artifact-registry</id>
-          <url>europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-maven/maskinporten-guardian</url>
+          <url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dapla-stat-maven/maskinporten-guardian</url>
         </repository>
       </distributionManagement>
     </profile>
