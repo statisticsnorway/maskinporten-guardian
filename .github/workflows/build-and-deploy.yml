@@ -21,10 +21,8 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker/maskinporten-guardian
+  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker
   IMAGE: maskinporten-guardian
-  TAG: ${{ github.sha }}
-
 
 jobs:
   docker-build:
@@ -34,7 +32,8 @@ jobs:
       id-token: "write"
     runs-on: ubuntu-latest
     outputs:
-      image-tag: ${{ env.DOCKER_IMAGE }}
+      image: ${{ env.DOCKER_IMAGE }}
+      image-digest: ${{ steps.docker_build.outputs.digest }}
     steps:
       - name: Setup Maven Action # Composite action
         uses: s4u/setup-maven-action@v1.7.0
@@ -45,7 +44,7 @@ jobs:
 
       - name: Set docker image env var
         run: |
-          echo "DOCKER_IMAGE=${REGISTRY}/${IMAGE}:${TAG}" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE=${REGISTRY}/${IMAGE}" >> $GITHUB_ENV
       - name: "Authenticate to Google Cloud"
         id: "auth"
         uses: "google-github-actions/auth@v2.1.3"
@@ -123,5 +122,5 @@ jobs:
         env:
           CLUSTER: test
           RESOURCE: .nais/test.yaml
-          VAR: image=${{ needs.docker-build.outputs.image-tag }}
+          VAR: image=${{ needs.docker-build.outputs.image }}@${{ needs.docker-build.outputs.image-digest }}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
