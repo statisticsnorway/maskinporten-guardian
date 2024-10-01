@@ -128,9 +128,7 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@v4
-
-      - name: Deploy to dev
-        uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev
           RESOURCE: .nais/dev.yaml
@@ -147,9 +145,7 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@v4
-
-      - name: Deploy to test
-        uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: test
           RESOURCE: .nais/test.yaml
@@ -166,9 +162,7 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@v4
-
-      - name: Deploy to prod
-        uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod
           RESOURCE: .nais/prod.yaml
