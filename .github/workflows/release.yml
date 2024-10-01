@@ -21,8 +21,10 @@ jobs:
           private-key: ${{ secrets.DAPLA_BOT_PRIVATE_KEY }}
 
       - name: Setup Maven Action # Composite action
-        uses: s4u/setup-maven-action@v1.7.0
+        uses: s4u/setup-maven-action@v1.14.0
         with:
+          checkout-token: ${{ steps.app-token.outputs.token }}
+          checkout-ref: refs/heads/master
           java-version: 21
           java-distribution: zulu
           maven-version: 3.9.9
