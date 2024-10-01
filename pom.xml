@@ -16,6 +16,7 @@
     <jdk.version>21</jdk.version>
     <release.version>21</release.version>
     <github.repository>statisticsnorway/maskinporten-guardian</github.repository>
+    <artifact-registry.url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dapla-stat-maven</artifact-registry.url>
     <micronaut.version>4.6.0</micronaut.version>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>no.ssb.maskinporten.aot.generated</micronaut.aot.packageName>
@@ -28,9 +29,8 @@
   </properties>
 
   <scm>
-    <connection>scm:git:git://github.com/statisticsnorway/maskinporten-guardian.git</connection>
-    <developerConnection>scm:git:git@github.com:statisticsnorway/maskinporten-guardian.git</developerConnection>
-    <url>https://github.com/statisticsnorway/maskinporten-guardian</url>
+    <developerConnection>scm:git:https://github.com/${github.repository}.git</developerConnection>
+    <url>https://github.com/${github.repository}</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -38,6 +38,21 @@
     <repository>
       <id>central</id>
       <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>artifact-registry</id>
+      <url>${artifact-registry.url}</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>dapla-stat</id>
+      <url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dapla-stat-maven</url>
     </repository>
   </repositories>
 
