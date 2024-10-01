@@ -1,0 +1,23 @@
+
+name: Run tests
+
+on:
+  push:
+    paths-ignore:
+      - README.md
+
+jobs:
+  build-branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+
+      - name: Setup Maven Action # Composite action
+        uses: s4u/setup-maven-action@v1.7.0
+        with:
+          java-version: 21
+          java-distribution: zulu
+          maven-version: 3.9.9
+
+      - name: Build with Maven and test
+        run: mvn --batch-mode -P ssb-bip verify test
