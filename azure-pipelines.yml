@@ -61,7 +61,7 @@ jobs:
         displayName: 'Test and build'
         inputs:
           goals: 'verify test'
-          options: '-P ssb-bip --batch-mode'
+          options: '--batch-mode'
           mavenOptions: '$(MAVEN_OPTS)'
 
       # Publish pipeline artifact
