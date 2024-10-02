@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - release
+      - release-tester
 
 jobs:
   release:
@@ -20,14 +21,26 @@ jobs:
           app-id: ${{ secrets.DAPLA_BOT_APP_ID }}
           private-key: ${{ secrets.DAPLA_BOT_PRIVATE_KEY }}
 
-      - name: Setup Maven Action # Composite action
-        uses: s4u/setup-maven-action@v1.14.0
+      - uses: actions/checkout@v3
         with:
-          checkout-token: ${{ steps.app-token.outputs.token }}
-          checkout-ref: refs/heads/master
+          token: ${{ steps.app-token.outputs.token }}
+          ref: refs/heads/master
+      
+      - name: Install Maven
+        run: |
+          MAVEN_VERSION=3.9.9
+          wget https://downloads.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+          tar xzvf apache-maven-$MAVEN_VERSION-bin.tar.gz
+          sudo mv apache-maven-$MAVEN_VERSION /opt/maven
+          sudo rm -f /usr/bin/mvn  # Remove existing symbolic link if it exists
+          sudo ln -s /opt/maven/bin/mvn /usr/bin/mvn  # Create new symbolic link
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
           java-version: 21
-          java-distribution: zulu
-          maven-version: 3.9.9
+          distribution: zulu
+          server-id: github
 
       - name: Authenticate to Google Cloud
         id: auth
