@@ -37,6 +37,13 @@ jobs:
           service_account: "gh-actions-dapla-stat@artifact-registry-5n.iam.gserviceaccount.com"
           token_format: access_token
 
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Configure Git user
         run: |
           git config user.name "dapla-bot[bot]"
