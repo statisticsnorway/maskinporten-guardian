@@ -32,7 +32,7 @@ jobs:
       id-token: write
     
     outputs:
-      image: ${{ steps }}
+      image: ${{ env.REGISTRY }}/${{ env.IMAGE }}
       image-tag: ${{ github.event.base_ref }}
 
     steps:
