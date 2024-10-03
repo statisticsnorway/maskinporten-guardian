@@ -1,16 +1,31 @@
-name: Release docker image
+name: Build
 
 on:
-  release:
-    types: [ published ]
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.md"
+      - "Makefile"
+      - ".mvn"
+      - ".gitignore"
+
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.md"
+      - "Makefile"
+      - ".mvn"
+      - ".gitignore"
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker
   IMAGE: maskinporten-guardian
 
 jobs:
-  release-docker:
-    name: Push image to Artifact Registry
+  build-test:
+    name: Build and test with Maven
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -18,7 +33,34 @@ jobs:
     
     outputs:
       image: ${{ env.REGISTRY }}/${{ env.IMAGE }}
-      image-tag: v${{github.event.release.tag_name }}
+      image-tag: ${{ github.event.base_ref }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: maven
+
+      - name: Maven build and install
+        run: mvn --batch-mode clean install
+
+  # This job will only run on pushes to the 'master' branch
+  build-push:
+    name: Push image to Artifact Registry
+    if: ${{github.event_name == 'push'}}
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ env.IMAGE }}
+      image-tag: ${{steps.image_tag.outputs.full_image_tag}}
 
     steps:
       - uses: actions/checkout@v4
@@ -38,16 +80,16 @@ jobs:
           service_account: "gh-actions-dapla-stat@artifact-registry-5n.iam.gserviceaccount.com"
           token_format: access_token
 
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+      
       - name: Login to Artifact Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
-
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
       
       - name: Set image tag
         id: image_tag
@@ -80,9 +122,11 @@ jobs:
           push: true
           tags: ${{ steps.build_metadata.outputs.tags }}
           labels: ${{ steps.build_metadata.outputs.labels }}
+  
   deploy:
-    name: Deploy to NAIS prod cluster
-    needs: release-docker
+    name: Deploy to NAIS test cluster
+    if: ${{github.event_name == 'push'}}
+    needs: build-push
     runs-on: ubuntu-latest
     permissions:
       contents: "read"
@@ -90,9 +134,4 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: ./.github/workflows/deploy.yml
-      with:
-        image: ${{needs.release-docker.outputs.image}}
-        image-tag: ${{needs.release-docker.outputs.image-tag}}
-        cluster: prod
-        nais-config-path: .nais/prod.yaml
+    - uses: ./.github/workflows/build-deploy.yml
