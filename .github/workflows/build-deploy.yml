@@ -3,6 +3,10 @@ on:
     types: [ published ]
   workflow_call:
 
+env:
+  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker
+  IMAGE: maskinporten-guardian
+
 jobs:
   build-push:
     name: Push image to Artifact Registry

@@ -19,10 +19,6 @@ on:
       - ".mvn"
       - ".gitignore"
 
-env:
-  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker
-  IMAGE: maskinporten-guardian
-
 jobs:
   build-test:
     name: Build and test with Maven
@@ -30,10 +26,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    
-    outputs:
-      image: ${{ env.REGISTRY }}/${{ env.IMAGE }}
-      image-tag: ${{ github.event.base_ref }}
 
     steps:
       - uses: actions/checkout@v4
