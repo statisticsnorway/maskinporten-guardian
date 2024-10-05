@@ -1,0 +1,62 @@
+name: Build application
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.md"
+      - "Makefile"
+      - ".mvn"
+      - ".gitignore"
+
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.md"
+      - "Makefile"
+      - ".mvn"
+      - ".gitignore"
+
+env:
+  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker
+  IMAGE: maskinporten-guardian
+
+jobs:
+  build-test:
+    name: Build and test with Maven
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ env.IMAGE }}
+      image-tag: ${{ github.event.base_ref }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: maven
+
+      - name: Maven build and install
+        run: mvn --batch-mode clean install
+  
+  deploy:
+    name: Deploy to NAIS test cluster
+    if: ${{github.event_name == 'push'}}
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/workflows/build-deploy.yml
