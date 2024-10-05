@@ -33,7 +33,7 @@ jobs:
       - name: Fetch release ID from GitHub API
         uses: JamesIves/fetch-api-data-action@v2
         with:
-          endpoint: https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/releases/tags/${{steps.fetch-tag.outputs.tag}}
+          endpoint: https://api.github.com/repos/${{ github.repository }}/releases/tags/${{steps.fetch-tag.outputs.tag}}
           configuration: '{ "method": "GET", "headers": {"Authorization": "Bearer ${{ secrets.GITHUB_TOKEN }}"} }'
 
       - name: Publish GitHub release

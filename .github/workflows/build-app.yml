@@ -58,4 +58,8 @@ jobs:
       id-token: "write"
 
     steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: ${{github.repository}}
+      
     - uses: ./.github/workflows/build-deploy.yml
