@@ -52,14 +52,4 @@ jobs:
     name: Deploy to NAIS test cluster
     if: ${{github.event_name == 'push'}}
     needs: build-test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: "read"
-      id-token: "write"
-
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: ${{github.repository}}
-      
-    - uses: ./.github/workflows/build-deploy.yml
+    uses: ./.github/workflows/build-deploy.yml
