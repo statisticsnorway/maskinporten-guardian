@@ -33,5 +33,5 @@ jobs:
         env:
           CLUSTER: ${{ inputs.cluster }}
           RESOURCE: ${{ inputs.nais-config-path }}
-          VAR: image=${{ inputs.image }}:${{ inputs.image-tag }}}
+          VAR: image=${{ inputs.image }}:${{ inputs.image-tag }}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
