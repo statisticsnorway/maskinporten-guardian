@@ -73,6 +73,9 @@ jobs:
             tags=latest,${current_tag}
             echo "tags=${tags}" >> "$GITHUB_OUTPUT"
           fi
+      
+      - name: Maven build and install
+        run: mvn --batch-mode clean install
 
       - name: Build and push docker image to Artifact Registry
         id: docker_build
