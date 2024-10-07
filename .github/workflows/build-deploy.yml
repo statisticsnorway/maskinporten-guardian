@@ -76,6 +76,12 @@ jobs:
       
       - name: Maven build and install
         run: mvn --batch-mode clean install
+    
+      - name: Docker meta
+        id: docker_metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}
 
       - name: Build and push docker image to Artifact Registry
         id: docker_build
@@ -85,6 +91,7 @@ jobs:
           file: Dockerfile
           push: true
           tags: ${{ steps.image_tag.outputs.tags }}
+          labels: ${{ steps.docker_metadata.outputs.labels }}
 
   deploy:
     name: Deploy to NAIS test cluster
