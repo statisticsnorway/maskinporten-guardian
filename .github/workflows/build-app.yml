@@ -45,3 +45,5 @@ jobs:
     if: ${{github.event_name == 'push'}}
     needs: build-test
     uses: ./.github/workflows/build-deploy.yml
+    with:
+      commit-sha: ${{ github.sha }}
