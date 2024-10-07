@@ -38,6 +38,12 @@ jobs:
           service_account: "gh-actions-dapla-stat@artifact-registry-5n.iam.gserviceaccount.com"
           token_format: access_token
 
+      - name: Setup Maven authentication to GitHub packages
+        uses: s4u/maven-settings-action@v2.8.0
+        id: maven_settings
+        with:
+          servers: '[{"id": "github","configuration": {"httpHeaders": {"property": {"name": "Authorization","value": "Bearer ${{ secrets.GITHUB_TOKEN }}"}}}}]'
+
       - name: Maven release and deploy to GitHub packages
         id: release_artifact
         env:
@@ -46,7 +52,6 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
 
           # Get the release version from the pom.xml before the next snapshot increment
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed "s/-SNAPSHOT//")
