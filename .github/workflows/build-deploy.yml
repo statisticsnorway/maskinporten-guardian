@@ -66,7 +66,7 @@ jobs:
             tags=latest,${semver},${major_minor_version},${major_version}
             echo "tags=${tags}" >> "$GITHUB_OUTPUT"
           else
-            git_sha_short={git rev-parse --short ${{inputs.commit-sha}}}
+            git_sha_short="$(git rev-parse --short ${{inputs.commit-sha}})"
             current_tag=${{github.event.repository.default_branch}}-$git_sha_short
 
             echo "nais_image_tag=${current_tag}" >> "$GITHUB_OUTPUT"
