@@ -44,6 +44,9 @@ jobs:
           MAVEN_USERNAME: ${env.GITHUB_ACTOR}
           MAVEN_PASSWORD: ${env.GITHUB_TOKEN}
         run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
           # Get the release version from the pom.xml before the next snapshot increment
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed "s/-SNAPSHOT//")
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
