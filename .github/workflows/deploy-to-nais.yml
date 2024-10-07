@@ -4,11 +4,7 @@ on:
   workflow_call:
     inputs:
       image:
-        description: Image on the form <REGISTRY>/<REPOSITORY>/<IMAGE_NAME>
-        required: true
-        type: string
-      image-tag:
-        description: Image tag
+        description: Image on the form <REGISTRY>/<REPOSITORY>/<IMAGE_NAME>:<TAG>
         required: true
         type: string
       cluster:
@@ -33,5 +29,5 @@ jobs:
         env:
           CLUSTER: ${{ inputs.cluster }}
           RESOURCE: ${{ inputs.nais-config-path }}
-          VAR: image=${{ inputs.image }}:${{ inputs.image-tag }}
+          VAR: image=${{ inputs.image }}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
