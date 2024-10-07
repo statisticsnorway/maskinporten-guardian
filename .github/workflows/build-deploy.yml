@@ -9,7 +9,7 @@ on:
         type: string
 
 env:
-  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker
+  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker/maskinporten-guardian
   IMAGE: maskinporten-guardian
 
 jobs:
