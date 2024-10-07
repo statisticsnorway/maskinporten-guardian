@@ -80,6 +80,8 @@ jobs:
             echo "Uploading $file"
             gh release upload ${{ steps.create_github_release.outputs.tag_name }} $file
           done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create a pull request with the changes in the branch
         run: |
