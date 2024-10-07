@@ -57,20 +57,21 @@ jobs:
         id: image_tag
         run: |
           if [ ${{ github.event_name }} == "release" ]; then
-            semver=v${GITHUB_REF}
-            major_minor_version=$(echo "$semver" | cut -d'.' -f1-2)
-            major_version=$(echo "$semver" | cut -d'.' -f1)
-            
+            semver=${REGISTRY}/${IMAGE}:v${GITHUB_REF}
+            major_minor_version=${REGISTRY}/${IMAGE}:v$(echo "$GITHUB_REF" | cut -d'.' -f1-2)
+            major_version=${REGISTRY}/${IMAGE}:v$(echo "$GITHUB_REF" | cut -d'.' -f1)
+            latest=${REGISTRY}/${IMAGE}:latest
             echo "nais_image_tag=${semver}" >> "$GITHUB_OUTPUT"
 
-            tags=latest,${semver},${major_minor_version},${major_version}
+            tags=${latest},${semver},${major_minor_version},${major_version}
             echo "tags=${tags}" >> "$GITHUB_OUTPUT"
           else
             git_sha_short="$(git rev-parse --short ${{inputs.commit-sha}})"
-            current_tag=${{github.event.repository.default_branch}}-$git_sha_short
+            current_sha_tag=${REGISTRY}/${IMAGE}:${{github.event.repository.default_branch}}-$git_sha_short
+            latest=${REGISTRY}/${IMAGE}:latest
 
-            echo "nais_image_tag=${current_tag}" >> "$GITHUB_OUTPUT"
-            tags=latest,${current_tag}
+            echo "nais_image_tag=${current_sha_tag}" >> "$GITHUB_OUTPUT"
+            tags=${latest},${current_sha_tag}
             echo "tags=${tags}" >> "$GITHUB_OUTPUT"
           fi
       
