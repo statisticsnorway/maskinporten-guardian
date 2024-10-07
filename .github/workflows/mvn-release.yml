@@ -40,6 +40,9 @@ jobs:
 
       - name: Maven release and deploy to GitHub packages
         id: release_artifact
+        env:
+          MAVEN_USERNAME: ${env.GITHUB_ACTOR}
+          MAVEN_PASSWORD: ${env.GITHUB_TOKEN}
         run: |
           # Get the release version from the pom.xml before the next snapshot increment
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed "s/-SNAPSHOT//")
