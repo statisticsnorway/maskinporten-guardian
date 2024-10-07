@@ -23,6 +23,8 @@ jobs:
     outputs:
       image: ${{ env.REGISTRY }}/${{ env.IMAGE }}
       nais-image-tag: ${{steps.image_tag.outputs.nais_image_tag}}
+      nais-cluster: ${{steps.nais-deploy-vars.outputs.cluster}}
+      nais-config-path: ${{steps.nais-deploy-vars.outputs.nais_config_path}}
 
     steps:
       - uses: actions/checkout@v4
@@ -94,32 +96,24 @@ jobs:
           tags: ${{ steps.image_tag.outputs.tags }}
           labels: ${{ steps.docker_metadata.outputs.labels }}
 
+      - name: Generate NAIS deploy variables
+        id: nais-deploy-vars
+        run: |
+          ## NAIS image tag is the tag used by NAIS for deployment
+          if [[ ${{github.event_name}} == "release" ]]; then
+            echo "cluster=prod" >> "$GITHUB_OUTPUT"
+            echo "nais_config_path=.nais/prod.yaml" >> "$GITHUB_OUTPUT"
+          else
+            echo "cluster=test" >> "$GITHUB_OUTPUT"
+            echo "nais_config_path=.nais/test.yaml" >> "$GITHUB_OUTPUT"
+          fi
+
   deploy:
-    name: Deploy to NAIS test cluster
+    name: Deploy to NAIS
     needs: build-push
-    runs-on: ubuntu-latest
-    permissions:
-      contents: "read"
-      id-token: "write"
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Generate NAIS deploy variables
-      id: nais-deploy-vars
-      run: |
-        ## NAIS image tag is the tag used by NAIS for deployment
-        if [[ ${{github.event_name}} == "release" ]]; then
-          echo "cluster=prod" >> "$GITHUB_OUTPUT"
-          echo "nais_config_path=.nais/prod.yaml" >> "$GITHUB_OUTPUT"
-        else
-          echo "cluster=test" >> "$GITHUB_OUTPUT"
-          echo "nais_config_path=.nais/test.yaml" >> "$GITHUB_OUTPUT"
-        fi
-
-    - uses: ./.github/workflows/deploy-to-nais.yml
-      with:
-        image: ${{needs.build-push.outputs.image}}
-        image-tag: ${{needs.build-push.outputs.nais-image-tag}}
-        cluster: ${{steps.nais-deploy-vars.outputs.cluster}}
-        nais-config-path: ${{steps.nais-deploy-vars.outputs.nais_config_path}}
+    uses: ./.github/workflows/deploy-to-nais.yml
+    with:
+      image: ${{needs.build-push.outputs.image}}
+      image-tag: ${{needs.build-push.outputs.nais-image-tag}}
+      cluster: ${{needs.build-push.outputs.nais-cluster}}
+      nais-config-path:  ${{needs.build-push.outputs.nais-config-path}}
