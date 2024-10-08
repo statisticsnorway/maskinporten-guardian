@@ -45,7 +45,7 @@ jobs:
         with:
           servers: '[{"id": "github","configuration": {"httpHeaders": {"property": {"name": "Authorization","value": "Bearer ${{ secrets.GITHUB_TOKEN }}"}}}}]'
 
-      - name: Maven release and deploy to GitHub packages and AR
+      - name: Maven release and deploy to GitHub packages and Artifact Registry
         id: release_artifact
         env:
           MAVEN_USERNAME: ${env.GITHUB_ACTOR}
