@@ -33,6 +33,8 @@ jobs:
             echo "Latest draft tag is not a draft release!"
             exit 1
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Fetch release information from GitHub API
         uses: JamesIves/fetch-api-data-action@v2
