@@ -80,7 +80,7 @@ jobs:
           fi
       
       - name: Maven build and install
-        run: mvn --batch-mode clean install
+        run: mvn --batch-mode -P artifact-registry deploy
     
       - name: Docker meta
         id: docker_metadata
