@@ -29,7 +29,7 @@ jobs:
         id: fetch-tag
         run: |
           tag="$(gh release list -R ${{ github.repository }} --limit 1 | awk -F '\t' '{if (match($2, "Draft")) print $3}')"
-          if [ ! -z "$tag" ]; then
+          if [[ ! -n $tag ]]; then
             echo "Latest draft tag is not a draft release!"
             exit 1
           fi
