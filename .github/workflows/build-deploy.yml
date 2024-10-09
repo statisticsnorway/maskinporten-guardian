@@ -80,7 +80,13 @@ jobs:
           fi
       
       - name: Maven build and install
-        run: mvn --batch-mode -P artifact-registry deploy
+        run: |
+          if [ ${{ github.event_name }} == "release" ]; then
+            mvn --batch-mode -P artifact-registry,github deploy
+          else
+            mvn --batch-mode -P artifact-registry deploy
+          fi
+          
     
       - name: Docker meta
         id: docker_metadata

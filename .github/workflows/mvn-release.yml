@@ -58,7 +58,7 @@ jobs:
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed "s/-SNAPSHOT//")
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           # Perform the release/deploy and increment the version to the next snapshot
-          mvn --batch-mode release:prepare -P github,artifact-registry -Darguments="-Dmaven.test.skip=true -Dmaven.deploy.skip=true"
+          mvn --batch-mode release:prepare -P -Darguments="-Dmaven.test.skip=true -Dmaven.deploy.skip=true"
           mvn --batch-mode release:perform
           TAG=$(git describe --abbrev=0 --tags)
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
