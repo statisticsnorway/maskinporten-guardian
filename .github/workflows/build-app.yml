@@ -25,6 +25,7 @@ env:
 jobs:
   build-test:
     name: Build and test with Maven
+    if: ${{github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -61,5 +62,4 @@ jobs:
   deploy-gatekeeper:
     name: Deploy to NAIS test cluster
     if: ${{github.event_name == 'push'}}
-    needs: build-test
     uses: ./.github/workflows/build-deploy-gatekeeper.yml
