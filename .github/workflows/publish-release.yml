@@ -24,13 +24,16 @@ jobs:
       id-token: write
       packages: write
     steps:
+      - uses: actions/checkout@v4
+
       - name: Publish GitHub release
         id: fetch-id
         run: |
           tag=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28"\
           /repos/statisticsnorway/maskinporten-guardian/releases\
           | jq -r 'map(select(.draft == true)) | first | .tag_name')
-          gh release edit "$tag" --draft=false
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          gh release edit $tag --draft=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
