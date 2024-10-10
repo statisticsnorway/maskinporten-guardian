@@ -2,11 +2,6 @@ on:
   release:
     types: [ published ]
   workflow_call:
-    inputs:
-      commit-sha:
-        description: Commit SHA from the caller
-        required: true
-        type: string
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker/maskinporten-guardian
@@ -69,7 +64,7 @@ jobs:
             tags=${latest},${semver},${major_minor_version},${major_version}
             echo "tags=${tags}" >> "$GITHUB_OUTPUT"
           else
-            git_sha_short="$(git rev-parse --short ${{inputs.commit-sha}})"
+            git_sha_short="$(git rev-parse --short ${{github.sha}})"
             current_sha_tag=${REGISTRY}/${IMAGE}:${{github.event.repository.default_branch}}-$git_sha_short
             latest=${REGISTRY}/${IMAGE}:latest
 
@@ -81,9 +76,7 @@ jobs:
       
       - name: Maven build and install
         run: |
-          if [ ${{ github.event_name }} == "workflow_call" ]; then
-            mvn --batch-mode -P artifact-registry deploy
-          fi
+          mvn --batch-mode -P artifact-registry deploy
     
       - name: Docker meta
         id: docker_metadata
