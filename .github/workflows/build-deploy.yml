@@ -1,7 +1,10 @@
 on:
-  release:
-    types: [ published ]
   workflow_call:
+    inputs:
+      tag:
+        description: Version tag, supplied if deploying to production
+        required: false
+        type: string
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker/maskinporten-guardian
@@ -22,6 +25,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Echo GitHub context
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4

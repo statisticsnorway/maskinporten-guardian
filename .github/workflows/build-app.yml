@@ -62,4 +62,4 @@ jobs:
   deploy-gatekeeper:
     name: Deploy to NAIS test cluster
     if: ${{github.event_name == 'push'}}
-    uses: ./.github/workflows/build-deploy-gatekeeper.yml
+    uses: ./.github/workflows/build-deploy.yml
