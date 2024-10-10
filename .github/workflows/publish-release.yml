@@ -1,24 +1,11 @@
 name: Publish release
 
 on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - master
-    paths-ignore:
-      - "**/*.md"
-      - "Makefile"
-      - ".mvn"
-      - ".gitignore"
+  workflow_call:
   workflow_dispatch:
 
 jobs:
   publish-release:
-    if: |
-      (github.head_ref == 'release' && github.event.pull_request.merged == true) ||
-      github.event_name == 'workflow_dispatch'
-
     runs-on: ubuntu-latest
     permissions:
       contents: write

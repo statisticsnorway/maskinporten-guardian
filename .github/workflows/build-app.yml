@@ -19,6 +19,9 @@ on:
       - ".mvn"
       - ".gitignore"
 
+env:
+  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker/maskinporten-guardian
+
 jobs:
   build-test:
     name: Build and test with Maven
@@ -36,14 +39,27 @@ jobs:
           java-version: 21
           distribution: temurin
           cache: maven
+      
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "projects/848539402404/locations/global/workloadIdentityPools/gh-actions/providers/gh-actions"
+          service_account: "gh-actions-dapla-stat@artifact-registry-5n.iam.gserviceaccount.com"
+          token_format: access_token
+      
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: "oauth2accesstoken"
+          password: "${{ steps.auth.outputs.access_token }}"
 
       - name: Maven build and install
         run: mvn --batch-mode clean install
   
-  deploy:
+  deploy-gatekeeper:
     name: Deploy to NAIS test cluster
     if: ${{github.event_name == 'push'}}
     needs: build-test
-    uses: ./.github/workflows/build-deploy.yml
-    with:
-      commit-sha: ${{ github.sha }}
+    uses: ./.github/workflows/build-deploy-gatekeeper.yml

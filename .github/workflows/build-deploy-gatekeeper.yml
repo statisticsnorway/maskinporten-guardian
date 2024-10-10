@@ -1,0 +1,14 @@
+on:
+  release:
+    types: [ published ]
+  workflow_call:
+
+jobs:
+  deploy-prod:
+    name: Deploy to NAIS production cluster
+    if: github.head_ref == 'release' && github.event.pull_request.merged == true
+    uses: ./.github/workflows/publish-release.yml
+  deploy-test:
+    name: Deploy to NAIS test cluster
+    if: github.head_ref != 'release'
+    uses: ./.github/workflows/build-deploy.yml
