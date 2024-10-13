@@ -1,0 +1,33 @@
+name: Deploy to NAIS
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: Image on the form <REGISTRY>/<REPOSITORY>/<IMAGE_NAME>
+        required: true
+        type: string
+      cluster:
+        description: NAIS cluster environment
+        required: true
+        type: string
+      nais-config-path:
+        description: Path to the NAIS configuration file
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy to NAIS cluster
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+          RESOURCE: ${{ inputs.nais-config-path }}
+          VAR: image=${{ inputs.image }}
+          DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
