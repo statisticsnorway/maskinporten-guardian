@@ -1,4 +1,3 @@
-## This workflow is either triggered when:
 on:
   release:
     types: [ published ]
