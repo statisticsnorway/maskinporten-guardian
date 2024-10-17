@@ -50,25 +50,21 @@ jobs:
 
       - name: Configure Git user
         run: |
-          git config user.email "dapla-bot[bot]"
-          git config user.name "143391972+dapla-bot[bot]@users.noreply.github.com"
+          git config user.email "143391972+dapla-bot[bot]@users.noreply.github.com"
+          git config user.name "dapla-bot[bot]"
 
       - name: Setup Maven authentication to GitHub packages
         uses: s4u/maven-settings-action@v3.0.0
         with:
           override: true
           githubServer: false
-          servers: '[{"id": "github","configuration": {"httpHeaders": {"property": {"name": "Authorization","value": "Bearer ${{ secrets.GITHUB_TOKEN }}"}}}}]'
+          servers: >-
+            [{"id": "github","username": "143391972+dapla-bot[bot]@users.noreply.github.com","password": "${{steps.app-token.outputs.token}}",
+            "configuration": {"httpHeaders": {"property": {"name": "Authorization","value": "Bearer ${{ secrets.GITHUB_TOKEN }}"}}}}]
 
       - name: Maven release and deploy to GitHub packages
         id: release_artifact
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          MAVEN_USERNAME: ${env.GITHUB_ACTOR}
-          MAVEN_PASSWORD: ${env.GITHUB_TOKEN}
         run: |
-          git config user.name "dapla-bot[bot]"
-          git config user.email "143391972+dapla-bot[bot]@users.noreply.github.com"
           # Get the release version from the pom.xml before the next snapshot increment
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed "s/-SNAPSHOT//")
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
