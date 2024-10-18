@@ -1,0 +1,17 @@
+{
+  "template": "https://github.com/statisticsnorway/cookiecutter-maven-build-deploy",
+  "commit": "0f051e30a6cfd0f311d560506e9fb5fbf23ad2dd",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "repo_name": "maskinporten-guardian",
+      "team_uniform_name": "dapla-stat",
+      "program_type": "APPLICATION",
+      "java_version": "21",
+      "default_branch_name": "master",
+      "__gha_folder_name": ".github",
+      "_template": "https://github.com/statisticsnorway/cookiecutter-maven-build-deploy"
+    }
+  },
+  "directory": null
+}
