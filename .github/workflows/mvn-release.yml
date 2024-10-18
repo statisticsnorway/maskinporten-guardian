@@ -5,10 +5,6 @@ on:
     branches:
       - release
 
-env:
-  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker
-  IMAGE: maskinporten-guardian
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -26,7 +22,7 @@ jobs:
         with:
           app-id: ${{ secrets.DAPLA_BOT_APP_ID }}
           private-key: ${{ secrets.DAPLA_BOT_PRIVATE_KEY }}
-
+      
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -45,30 +41,36 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: "projects/848539402404/locations/global/workloadIdentityPools/gh-actions/providers/gh-actions"
-          service_account: "gh-actions-dapla-stat@artifact-registry-5n.iam.gserviceaccount.com"
+          service_account: "gh-actions-dapla-stat@${{secrets.GAR_PROJECT_ID}}.iam.gserviceaccount.com"
           token_format: access_token
 
+      - name: Get bot variables
+        id: get-bot-vars
+        run: |
+          bot_name="dapla-bot"
+          bot_id=$(curl -s https://api.github.com/users/$(bot_name)%5Bbot%5D | jq '.id')
+          bot_email="$(dapla_bot_id)+$(bot_name)[bot]@users.noreply.github.com"
+
+          echo "bot_name=${bot_name}[bot]" >> $GITHUB_OUTPUT
+          echo "bot_email=${bot_email}" >> $GITHUB_OUTPUT
+      
       - name: Configure Git user
         run: |
-          git config user.email "dapla-bot[bot]"
-          git config user.name "143391972+dapla-bot[bot]@users.noreply.github.com"
+          git config user.email {{steps.get-bot-vars.outputs.bot_email}}
+          git config user.name {{steps.get-bot-vars.outputs.bot_name}}
 
       - name: Setup Maven authentication to GitHub packages
         uses: s4u/maven-settings-action@v3.0.0
         with:
           override: true
           githubServer: false
-          servers: '[{"id": "github","configuration": {"httpHeaders": {"property": {"name": "Authorization","value": "Bearer ${{ secrets.GITHUB_TOKEN }}"}}}}]'
-
+          servers: >-
+            [{"id": "github","username": "${{steps.get-bot-vars.outputs.bot_email}}","password": "${{steps.app-token.outputs.token}}",
+            "configuration": {"httpHeaders": {"property": {"name": "Authorization","value": "Bearer ${{ secrets.GITHUB_TOKEN }}"}}}}]
+      
       - name: Maven release and deploy to GitHub packages
-        id: release_artifact
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          MAVEN_USERNAME: ${env.GITHUB_ACTOR}
-          MAVEN_PASSWORD: ${env.GITHUB_TOKEN}
+        id: release-artifact
         run: |
-          git config user.name "dapla-bot[bot]"
-          git config user.email "143391972+dapla-bot[bot]@users.noreply.github.com"
           # Get the release version from the pom.xml before the next snapshot increment
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed "s/-SNAPSHOT//")
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
@@ -77,14 +79,14 @@ jobs:
           mvn --batch-mode release:perform
           TAG=$(git describe --abbrev=0 --tags)
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
-
+      
       - name: Create GitHub release draft
         uses: release-drafter/release-drafter@v6
-        id: create_github_release
+        id: create-github-release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
-          tag: ${{ steps.release_artifact.outputs.tag }}
+          tag: ${{ steps.release-artifact.outputs.tag }}
 
       - name: Upload assets to GitHub release draft
         env:
@@ -92,10 +94,10 @@ jobs:
         run: |
           ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           # Get all files matching the artifact id and version (source, javadoc, etc.)
-          ARTIFACT_GLOB=(./target/$ARTIFACT_ID-${{ steps.release_artifact.outputs.version }}*.jar)
+          ARTIFACT_GLOB=(./target/$ARTIFACT_ID-${{ steps.release-artifact.outputs.version }}*.jar)
           for file in "${ARTIFACT_GLOB[@]}"; do
             echo "Uploading $file"
-            gh release upload ${{ steps.create_github_release.outputs.tag_name }} $file
+            gh release upload ${{ steps.create-github-release.outputs.tag_name }} $file
           done
 
       - name: Publish GitHub release
@@ -103,4 +105,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
-          release_id: ${{ steps.create_github_release.outputs.id }}
+          release_id: ${{ steps.create-github-release.outputs.id }} 
