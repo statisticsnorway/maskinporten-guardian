@@ -47,7 +47,6 @@ jobs:
         with:
           repository: "statisticsnorway/data-collector-core"
           path: "protected-config"
-          ref: "main"
           token: ${{ steps.app-token.outputs.token }}
 
       - uses: nais/deploy/actions/deploy@v2
