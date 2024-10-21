@@ -28,6 +28,8 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
         name: Retrieve protected configuration
         with:
           repository: "statisticsnorway/dapla-platform-iac"
@@ -35,7 +37,6 @@ jobs:
           ref: "main"
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: ${{ inputs.cluster }}
