@@ -30,7 +30,8 @@ jobs:
       - uses: actions/checkout@v4
         name: Retrieve protected configuration
         with:
-          repository: 'statisticsnorway/dapla-platform-iac'
+          repository: "statisticsnorway/dapla-platform-iac"
+          ref: "main"
 
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
