@@ -35,23 +35,36 @@ jobs:
           app-id: ${{ secrets.DAPLA_BOT_APP_ID }}
           private-key: ${{ secrets.DAPLA_BOT_PRIVATE_KEY }}
           owner: statisticsnorway
-          repositories: maskinporten-guardian, data-collector-core
+          repositories: maskinporten-guardian, dapla-stat-iac
 
       - name: Configure Git user
         run: |
           git config user.email "dapla-bot[bot]"
           git config user.name "143391972+dapla-bot[bot]@users.noreply.github.com"
 
+      # Set inputs based on the event type
+      - name: Set inputs for push event
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "cluster=prod" >> $GITHUB_ENV
+          echo "nais_config_path=.nais/prod.yaml" >> $GITHUB_ENV
+          echo "image=europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-stat-docker/maskinporten-guardian:latest" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
         name: Retrieve protected configuration
         with:
-          repository: "statisticsnorway/data-collector-core"
-          path: "protected-config"
+          repository: "statisticsnorway/dapla-stat-iac"
+          path: "app-config"
           token: ${{ steps.app-token.outputs.token }}
+          sparse-checkout: |
+            nais/apps/maskinporten-guardian/${{ inputs.cluster }}
+
+      - run: |
+          ls -la app-config
 
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: ${{ inputs.cluster }}
-          RESOURCE: ${{ inputs.nais-config-path }}
+          RESOURCE: ./nais/${{ inputs.cluster }}.yaml, app-config/bootstrap-${{ inputs.cluster }}.yml, app-config/application-${{ inputs.cluster }}.yml
           VAR: image=${{ inputs.image }}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
