@@ -31,7 +31,9 @@ jobs:
         name: Retrieve protected configuration
         with:
           repository: "statisticsnorway/dapla-platform-iac"
+          path: "dapla-platform-iac"
           ref: "main"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
