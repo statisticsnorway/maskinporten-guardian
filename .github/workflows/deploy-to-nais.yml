@@ -37,11 +37,6 @@ jobs:
           owner: statisticsnorway
           repositories: maskinporten-guardian, dapla-stat-iac
 
-      - name: Configure Git user
-        run: |
-          git config user.email "dapla-bot[bot]"
-          git config user.name "143391972+dapla-bot[bot]@users.noreply.github.com"
-
       # Set inputs based on the event type
       - name: Set inputs for push event
         if: ${{ github.event_name == 'push' }}
@@ -57,14 +52,21 @@ jobs:
           path: "app-config"
           token: ${{ steps.app-token.outputs.token }}
           sparse-checkout: |
-            nais/apps/maskinporten-guardian/${{ inputs.cluster }}
+            apps/nais/maskinporten-guardian/${{ inputs.cluster || env.cluster }}
 
-      - run: |
-          ls -la app-config
+      - name: Set app_config environment variable
+        run: |
+          app_config_dir="app-config/apps/nais/maskinporten-guardian/${{ inputs.cluster || env.cluster }}"
+          ls -la ${app_config_dir}
+          tree -L 6 app-config
+          echo ${app_config_dir}
+          ls -la ${app_config_dir}
+          cat ${app_config_dir}/bootstrap-${{ inputs.cluster || env.cluster }}.yml
+          echo "app_config=${app_config_dir}" >> $GITHUB_ENV
 
       - uses: nais/deploy/actions/deploy@v2
         env:
-          CLUSTER: ${{ inputs.cluster }}
-          RESOURCE: ./nais/${{ inputs.cluster }}.yaml, app-config/bootstrap-${{ inputs.cluster }}.yml, app-config/application-${{ inputs.cluster }}.yml
-          VAR: image=${{ inputs.image }}
+          CLUSTER: ${{ inputs.cluster || env.cluster }}
+          RESOURCE: .nais/${{ inputs.cluster || env.cluster }}.yaml, ${{ env.app_config }}/bootstrap-${{ inputs.cluster || env.cluster }}.yml, ${{ env.app_config }}/application-${{ inputs.cluster || env.cluster }}.yml
+          VAR: image=${{ inputs.image || env.image }}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
