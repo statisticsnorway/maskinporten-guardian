@@ -29,13 +29,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.DAPLA_BOT_APP_ID }}
+          private-key: ${{ secrets.DAPLA_BOT_PRIVATE_KEY }}
+
+      - name: Configure Git user
+        run: |
+          git config user.email "dapla-bot[bot]"
+          git config user.name "143391972+dapla-bot[bot]@users.noreply.github.com"
+
       - uses: actions/checkout@v4
         name: Retrieve protected configuration
         with:
-          repository: "statisticsnorway/dapla-platform-iac"
-          path: "dapla-platform-iac"
+          repository: "statisticsnorway/data-collector-core"
+          path: "protected-config"
           ref: "main"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - uses: nais/deploy/actions/deploy@v2
         env:
