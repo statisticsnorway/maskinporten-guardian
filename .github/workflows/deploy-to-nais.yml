@@ -1,6 +1,9 @@
 name: Deploy to NAIS
-
 on:
+  push:
+    branches:
+      - deploy
+
   workflow_call:
     inputs:
       image:
