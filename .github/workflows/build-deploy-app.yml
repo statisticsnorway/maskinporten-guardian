@@ -111,7 +111,7 @@ jobs:
       - name: Maven build and install
         run: |
           if [[ ${{github.event_name}} == "push" ]]; then
-            mvn --batch-mode -P dapla-artifact-registry deploy && mvn --batch-mode package
+            mvn --batch-mode -P dapla-artifact-registry deploy
           else
             mvn --batch-mode clean package
           fi
@@ -125,7 +125,7 @@ jobs:
           pull: false
           project_id: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          byosbom: target/classes/META-INF/sbom/application.cdx.json
+          byosbom: target/bom.json
 
   deploy:
     name: Deploy to NAIS
