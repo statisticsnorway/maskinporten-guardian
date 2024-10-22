@@ -16,7 +16,7 @@
     <jdk.version>21</jdk.version>
     <release.version>21</release.version>
     <github.repository>statisticsnorway/maskinporten-guardian</github.repository>
-    <nais-artifact-registry.url>artifactregistry://europe-north1-maven.pkg.dev/nais-management-b3a7/dapla-stat</nais-artifact-registry.url>
+    <dapla-artifact-registry.url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dapla-stat-maven</dapla-artifact-registry.url>
     <micronaut.version>4.6.0</micronaut.version>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>no.ssb.maskinporten.aot.generated</micronaut.aot.packageName>
@@ -41,8 +41,8 @@
       <url>https://repo.maven.apache.org/maven2</url>
     </repository>
     <repository>
-      <id>nais-artifact-registry</id>
-      <url>${nais-artifact-registry.url}</url>
+      <id>dapla-artifact-registry</id>
+      <url>${dapla-artifact-registry.url}</url>
       <releases>
         <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
@@ -50,10 +50,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </repository>
-    <repository>
-      <id>dapla-stat</id>
-      <url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dapla-stat-maven</url>
     </repository>
   </repositories>
 
@@ -469,15 +465,15 @@
             </distributionManagement>
         </profile>
         <profile>
-            <id>nais-artifact-registry</id>
+            <id>dapla-artifact-registry</id>
             <distributionManagement>
                 <repository>
-                    <id>nais-artifact-registry</id>
-                    <url>${nais-artifact-registry.url}</url>
+                    <id>dapla-artifact-registry</id>
+                    <url>${dapla-artifact-registry.url}</url>
                 </repository>
                 <snapshotRepository>
-                    <id>nais-artifact-registry-snapshots</id>
-                    <url>${nais-artifact-registry.url}</url>
+                    <id>dapla-artifact-registry-snapshots</id>
+                    <url>${dapla-artifact-registry.url}</url>
                 </snapshotRepository>
             </distributionManagement>
             <properties>
