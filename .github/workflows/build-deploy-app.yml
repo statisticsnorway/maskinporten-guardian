@@ -111,9 +111,9 @@ jobs:
       - name: Maven build and install
         run: |
           if [[ ${{github.event_name}} == "push" ]]; then
-            mvn --batch-mode -P dapla-artifact-registry deploy
+            mvn --batch-mode -P dapla-artifact-registry deploy && mvn --batch-mode package
           else
-            mvn --batch-mode clean install
+            mvn --batch-mode clean package
           fi
 
       - name: Build and push image to NAIS Artifact Repository
