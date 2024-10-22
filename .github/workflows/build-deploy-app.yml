@@ -11,7 +11,8 @@ on:
       - ".gitignore"
 
 env:
-  REGISTRY: europe-north1-docker.pkg.dev/${{secrets.GAR_PROJECT_ID}}/dapla-stat-docker/maskinporten-guardian
+  NAIS_REGISTRY: europe-north1-docker.pkg.dev/${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}/dapla-stat/maskinporten-guardian
+  DAPLA_REGISTRY: europe-north1-docker.pkg.dev/${{ secrets.GAR_PROJECT_ID }}
   IMAGE: maskinporten-guardian
 
 jobs:
@@ -36,10 +37,10 @@ jobs:
         run: |
           if [ ${{ github.event_name }} == "release" ]; then
             RELEASE_VERSION=${GITHUB_REF#refs/*/}
-            semver=${REGISTRY}/${IMAGE}:v${RELEASE_VERSION}
-            major_minor_version=${REGISTRY}/${IMAGE}:v$(echo "$RELEASE_VERSION" | cut -d'.' -f1-2)
-            major_version=${REGISTRY}/${IMAGE}:v$(echo "$RELEASE_VERSION" | cut -d'.' -f1)
-            latest=${REGISTRY}/${IMAGE}:latest
+            semver=${NAIS_REGISTRY}/${IMAGE}:v${RELEASE_VERSION}
+            major_minor_version=${NAIS_REGISTRY}/${IMAGE}:v$(echo "$RELEASE_VERSION" | cut -d'.' -f1-2)
+            major_version=${NAIS_REGISTRY}/${IMAGE}:v$(echo "$RELEASE_VERSION" | cut -d'.' -f1)
+            latest=${NAIS_REGISTRY}/${IMAGE}:latest
 
             ## NAIS image is the image used by NAIS for deployment
             echo "nais_image=${semver}" >> "$GITHUB_OUTPUT"
@@ -48,8 +49,8 @@ jobs:
             echo "tags=${tags}" >> "$GITHUB_OUTPUT"
           else
             git_sha_short="$(git rev-parse --short ${{github.sha}})"
-            current_sha_tag=${REGISTRY}/${IMAGE}:${{github.event.repository.default_branch}}-$git_sha_short
-            latest=${REGISTRY}/${IMAGE}:latest
+            current_sha_tag=${NAIS_REGISTRY}/${IMAGE}:${{github.event.repository.default_branch}}-$git_sha_short
+            latest=${NAIS_REGISTRY}/${IMAGE}:latest
 
             ## NAIS image is the image used by NAIS for deployment
             echo "nais_image=${current_sha_tag}" >> "$GITHUB_OUTPUT"
@@ -92,7 +93,7 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "projects/848539402404/locations/global/workloadIdentityPools/gh-actions/providers/gh-actions"
+          workload_identity_provider: "projects/${{secrets.GAR_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/gh-actions/providers/gh-actions"
           service_account: "gh-actions-dapla-stat@${{secrets.GAR_PROJECT_ID}}.iam.gserviceaccount.com"
           token_format: access_token
 
@@ -103,34 +104,29 @@ jobs:
       - name: Login to Artifact Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.DAPLA_REGISTRY }}
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
       - name: Maven build and install
         run: |
           if [[ ${{github.event_name}} == "push" ]]; then
-            mvn --batch-mode -P artifact-registry,github deploy
+            mvn --batch-mode -P dapla-artifact-registry deploy
           else
             mvn --batch-mode clean install
           fi
 
-      - name: Docker meta
-        id: docker_metadata
-        uses: docker/metadata-action@v5
+      - name: Build and push image to NAIS Artifact Repository
+        uses: nais/docker-build-push@v0
+        id: docker-push
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}
+          team: dapla-stat
+          tag: ${{ needs.setup-build-push-deploy.outputs.nais-image }}
+          pull: false
+          project_id: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          byosbom: target/classes/META-INF/sbom/application.cdx.json
 
-      - name: Build and push docker image to Artifact Registry
-        id: docker_build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: ${{ needs.setup-build-push-deploy.outputs.tags }}
-          labels: ${{ steps.docker_metadata.outputs.labels }}
-      
   deploy:
     name: Deploy to NAIS
     needs: [build-push, setup-build-push-deploy]
