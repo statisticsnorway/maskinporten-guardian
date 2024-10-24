@@ -455,31 +455,31 @@
       </build>
     </profile>
     <profile>
-            <id>github</id>
-            <distributionManagement>
-                <repository>
-                    <id>github</id>
-                    <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/${github.repository}</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>dapla-artifact-registry</id>
-            <distributionManagement>
-                <repository>
-                    <id>dapla-artifact-registry</id>
-                    <url>${dapla-artifact-registry.url}</url>
-                </repository>
-                <snapshotRepository>
-                    <id>dapla-artifact-registry-snapshots</id>
-                    <url>${dapla-artifact-registry.url}</url>
-                </snapshotRepository>
-            </distributionManagement>
-            <properties>
-                <skip.it>true</skip.it>
-            </properties>
-        </profile>
+      <id>github</id>
+      <distributionManagement>
+          <repository>
+              <id>github</id>
+              <name>GitHub Packages</name>
+              <url>https://maven.pkg.github.com/${github.repository}</url>
+          </repository>
+      </distributionManagement>
+    </profile>
+    <profile>
+        <id>dapla-artifact-registry</id>
+        <distributionManagement>
+            <repository>
+                <id>dapla-artifact-registry</id>
+                <url>${dapla-artifact-registry.url}</url>
+            </repository>
+            <snapshotRepository>
+                <id>dapla-artifact-registry-snapshots</id>
+                <url>${dapla-artifact-registry.url}</url>
+            </snapshotRepository>
+        </distributionManagement>
+        <properties>
+            <skip.it>true</skip.it>
+        </properties>
+    </profile>
   </profiles>
 
 </project>

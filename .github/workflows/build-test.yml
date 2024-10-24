@@ -9,7 +9,7 @@ on:
       - ".gitignore"
 
 env:
-  DAPLA_REGISTRY: europe-north1-docker.pkg.dev/${{secrets.GAR_PROJECT_ID}}
+  DAPLA_REGISTRY: europe-north1-docker.pkg.dev/${{secrets.GAR_PROJECT_ID}}/dapla-stat-docker
 
 jobs:
   build-test:
