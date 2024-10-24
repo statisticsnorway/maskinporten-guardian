@@ -116,7 +116,8 @@ jobs:
     uses: ./.github/workflows/deploy-to-nais.yml
     with:
       registry: europe-north1-docker.pkg.dev
-      image: dapla-stat/maskinporten-guardian
+      repository: dapla-stat
+      image-name: maskinporten-guardian
       image-tag: ${{ needs.setup-build-push-deploy.outputs.nais-tag }}
       cluster: ${{needs.setup-build-push-deploy.outputs.nais-cluster}}
       nais-config-path:  ${{needs.setup-build-push-deploy.outputs.nais-config-path}}
