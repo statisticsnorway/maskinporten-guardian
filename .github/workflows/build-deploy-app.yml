@@ -104,8 +104,7 @@ jobs:
         id: docker-push
         with:
           team: dapla-stat
-          tag: europe-north1-docker.pkg.dev/${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}/
-            dapla-stat/maskinporten-guardian/maskinporten-guardian:${{ needs.setup-build-push-deploy.outputs.nais-tag }}
+          tag: ${{ needs.setup-build-push-deploy.outputs.nais-tag }}
           pull: false
           project_id: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
@@ -117,7 +116,7 @@ jobs:
     uses: ./.github/workflows/deploy-to-nais.yml
     with:
       registry: europe-north1-docker.pkg.dev
-      image: dapla-stat/maskinporten-guardian/maskinporten-guardian
+      image: dapla-stat/maskinporten-guardian
       image-tag: ${{ needs.setup-build-push-deploy.outputs.nais-tag }}
       cluster: ${{needs.setup-build-push-deploy.outputs.nais-cluster}}
       nais-config-path:  ${{needs.setup-build-push-deploy.outputs.nais-config-path}}

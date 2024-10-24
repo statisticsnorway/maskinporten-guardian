@@ -7,8 +7,12 @@ on:
         description: Registry, for example "europe-north1-docker.pkg.dev"
         required: true
         type: string
-      image:
-        description: Image on the form <TEAM_REPO>/<IMAGE_NAME>
+      repository:
+        description: Registry repository
+        required: true
+        type: string
+      image-name:
+        description: Image name
         required: true
         type: string
       image-tag:
@@ -41,5 +45,5 @@ jobs:
         env:
           CLUSTER: ${{ inputs.cluster }}
           RESOURCE: ${{ inputs.nais-config-path }}
-          VAR: image=${{ inputs.registry }}/${{ secrets.registry-project }}/${{ inputs.image }}:${{ inputs.image-tag }}
+          VAR: image=${{ inputs.registry }}/${{ secrets.registry-project }}/${{ inputs.repository }}/${{ inputs.image-tag }}:${{ inputs.image-tag }}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
