@@ -24,10 +24,9 @@ jobs:
       id-token: write
     
     outputs:
-      nais-image: ${{steps.image-tag.outputs.nais_image}}
+      nais-tag: ${{steps.image-tag.outputs.tag}}
       nais-cluster: ${{steps.nais-deploy-vars.outputs.cluster}}
       nais-config-path: ${{steps.nais-deploy-vars.outputs.nais_config_path}}
-      tags: ${{steps.image-tag.outputs.tags}}
     
     steps:
       - uses: actions/checkout@v4
@@ -37,25 +36,9 @@ jobs:
         run: |
           if [ ${{ github.event_name }} == "release" ]; then
             RELEASE_VERSION=${GITHUB_REF#refs/*/}
-            semver=${NAIS_REGISTRY}/${IMAGE}:v${RELEASE_VERSION}
-            major_minor_version=${NAIS_REGISTRY}/${IMAGE}:v$(echo "$RELEASE_VERSION" | cut -d'.' -f1-2)
-            major_version=${NAIS_REGISTRY}/${IMAGE}:v$(echo "$RELEASE_VERSION" | cut -d'.' -f1)
-            latest=${NAIS_REGISTRY}/${IMAGE}:latest
-
-            ## NAIS image is the image used by NAIS for deployment
-            echo "nais_image=${semver}" >> "$GITHUB_OUTPUT"
-
-            tags=${latest},${semver},${major_minor_version},${major_version}
-            echo "tags=${tags}" >> "$GITHUB_OUTPUT"
+            echo "tag=v${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
           else
-            git_sha_short="$(git rev-parse --short ${{github.sha}})"
-            current_sha_tag=${NAIS_REGISTRY}/${IMAGE}:${{github.event.repository.default_branch}}-$git_sha_short
-            latest=${NAIS_REGISTRY}/${IMAGE}:latest
-
-            ## NAIS image is the image used by NAIS for deployment
-            echo "nais_image=${current_sha_tag}" >> "$GITHUB_OUTPUT"
-            tags=${latest},${current_sha_tag}
-            echo "tags=${tags}" >> "$GITHUB_OUTPUT"
+            echo "tag=${{github.event.repository.default_branch}}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Generate NAIS deploy variables
@@ -104,7 +87,7 @@ jobs:
       - name: Login to Artifact Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.DAPLA_REGISTRY }}
+          registry: europe-north1-docker.pkg.dev/${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
@@ -121,7 +104,8 @@ jobs:
         id: docker-push
         with:
           team: dapla-stat
-          tag: ${{ needs.setup-build-push-deploy.outputs.nais-image }}
+          tag: europe-north1-docker.pkg.dev/${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}/
+            dapla-stat/maskinporten-guardian/maskinporten-guardian:${{ needs.setup-build-push-deploy.outputs.nais-tag }}
           pull: false
           project_id: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
@@ -132,6 +116,10 @@ jobs:
     needs: [build-push, setup-build-push-deploy]
     uses: ./.github/workflows/deploy-to-nais.yml
     with:
-      image: ${{needs.setup-build-push-deploy.outputs.nais-image}}
+      registry: europe-north1-docker.pkg.dev
+      image: dapla-stat/maskinporten-guardian/maskinporten-guardian
+      image-tag: ${{ needs.setup-build-push-deploy.outputs.nais-tag }}
       cluster: ${{needs.setup-build-push-deploy.outputs.nais-cluster}}
       nais-config-path:  ${{needs.setup-build-push-deploy.outputs.nais-config-path}}
+    secrets:
+      registry-project: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
