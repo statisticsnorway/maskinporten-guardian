@@ -48,8 +48,8 @@ jobs:
         id: get-bot-vars
         run: |
           bot_name="dapla-bot"
-          bot_id=$(curl -s https://api.github.com/users/$(bot_name)%5Bbot%5D | jq '.id')
-          bot_email="$(dapla_bot_id)+$(bot_name)[bot]@users.noreply.github.com"
+          bot_id=$(curl -s https://api.github.com/users/${bot_name}%5Bbot%5D | jq '.id')
+          bot_email="${dapla_bot_id}+${bot_name}[bot]@users.noreply.github.com"
 
           echo "bot_name=${bot_name}[bot]" >> $GITHUB_OUTPUT
           echo "bot_email=${bot_email}" >> $GITHUB_OUTPUT

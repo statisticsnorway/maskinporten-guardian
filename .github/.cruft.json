@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/statisticsnorway/cookiecutter-maven-build-deploy",
-  "commit": "0f051e30a6cfd0f311d560506e9fb5fbf23ad2dd",
+  "commit": "09480c367e400cecf1a5cd3d252583cb06d60142",
   "checkout": null,
   "context": {
     "cookiecutter": {
