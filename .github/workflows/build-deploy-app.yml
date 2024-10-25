@@ -10,12 +10,7 @@ on:
       - ".mvn"
       - ".gitignore"
 
-env:
-  NAIS_REGISTRY: europe-north1-docker.pkg.dev/${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}/dapla-stat/maskinporten-guardian
-  DAPLA_REGISTRY: europe-north1-docker.pkg.dev/${{ secrets.GAR_PROJECT_ID }}
-  IMAGE: maskinporten-guardian
-
-jobs: 
+jobs:
   build-push:
     name: Build and push to registries
     # If triggering event is release, the commits on 'master' should build
@@ -94,7 +89,7 @@ jobs:
             echo "cluster=test" >> "$GITHUB_OUTPUT"
             echo "nais_config_path=.nais/test.yaml" >> "$GITHUB_OUTPUT"
           fi
-
+      
   deploy:
     name: Deploy to NAIS
     needs: build-push

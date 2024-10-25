@@ -56,8 +56,8 @@ jobs:
       
       - name: Configure Git user
         run: |
-          git config user.email {{steps.get-bot-vars.outputs.bot_email}}
-          git config user.name {{steps.get-bot-vars.outputs.bot_name}}
+          git config user.email ${{steps.get-bot-vars.outputs.bot_email}}
+          git config user.name ${{steps.get-bot-vars.outputs.bot_name}}
 
       - name: Setup Maven authentication to GitHub packages
         uses: s4u/maven-settings-action@v3.0.0
