@@ -15,52 +15,20 @@ env:
   DAPLA_REGISTRY: europe-north1-docker.pkg.dev/${{ secrets.GAR_PROJECT_ID }}
   IMAGE: maskinporten-guardian
 
-jobs:
-  setup-build-push-deploy:
-    name: Set up variables to build/push or deploy
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    
-    outputs:
-      nais-tag: ${{steps.image-tag.outputs.tag}}
-      nais-cluster: ${{steps.nais-deploy-vars.outputs.cluster}}
-      nais-config-path: ${{steps.nais-deploy-vars.outputs.nais_config_path}}
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Generate image tags
-        id: image-tag
-        run: |
-          if [ ${{ github.event_name }} == "release" ]; then
-            RELEASE_VERSION=${GITHUB_REF#refs/*/}
-            echo "tag=v${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=${{github.event.repository.default_branch}}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Generate NAIS deploy variables
-        id: nais-deploy-vars
-        run: |
-          if [[ ${{github.event_name}} == "release" ]]; then
-            echo "cluster=prod" >> "$GITHUB_OUTPUT"
-            echo "nais_config_path=.nais/prod.yaml" >> "$GITHUB_OUTPUT"
-          else
-            echo "cluster=test" >> "$GITHUB_OUTPUT"
-            echo "nais_config_path=.nais/test.yaml" >> "$GITHUB_OUTPUT"
-          fi
-      
+jobs: 
   build-push:
     name: Build and push to registries
     # If triggering event is release, the commits on 'master' should build
     # the image
-    needs: setup-build-push-deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+
+    outputs:
+      nais-tag: ${{steps.nais-deploy-vars.outputs.nais_tag}}
+      nais-cluster: ${{steps.nais-deploy-vars.outputs.cluster}}
+      nais-config-path: ${{steps.nais-deploy-vars.outputs.nais_config_path}}
     
     steps:
       - uses: actions/checkout@v4
@@ -94,28 +62,49 @@ jobs:
           else
             mvn --batch-mode clean package
           fi
-
+      
+      - name: Add optional extra tag
+        id: version-tag
+        run: |
+          if [ ${{ github.event_name }} == "release" ]; then
+            RELEASE_VERSION=${GITHUB_REF#refs/*/}
+            echo "version_tag=v${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
+          fi
+      
       - name: Build and push image to NAIS Artifact Repository
         uses: nais/docker-build-push@v0
         id: docker-push
         with:
           team: dapla-stat
-          tag: ${{ needs.setup-build-push-deploy.outputs.nais-tag }}
+          tag: ${{ steps.version-tag.outputs.version-tag }} # Empty if not triggered by release
           pull: false
           project_id: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           byosbom: target/bom.json
+      
+      - name: Generate image tags
+        id: nais-deploy-vars
+        run: |
+          if [[ ${{github.event_name}} == "release" ]]; then
+            echo "nais_tag=${{ steps.version-tag.outputs.version_tag }}" >> "$GITHUB_OUTPUT"
+            echo "cluster=prod" >> "$GITHUB_OUTPUT"
+            echo "nais_config_path=.nais/prod.yaml" >> "$GITHUB_OUTPUT"
+          else
+            echo "nais_tag=${{ steps.docker-push.outputs.tag }}" >> "$GITHUB_OUTPUT"
+            echo "cluster=test" >> "$GITHUB_OUTPUT"
+            echo "nais_config_path=.nais/test.yaml" >> "$GITHUB_OUTPUT"
+          fi
 
   deploy:
     name: Deploy to NAIS
-    needs: [build-push, setup-build-push-deploy]
+    needs: build-push
     uses: ./.github/workflows/deploy-to-nais.yml
     with:
       registry: europe-north1-docker.pkg.dev
       repository: dapla-stat
       image-name: maskinporten-guardian
-      image-tag: ${{ needs.setup-build-push-deploy.outputs.nais-tag }}
-      cluster: ${{needs.setup-build-push-deploy.outputs.nais-cluster}}
-      nais-config-path:  ${{needs.setup-build-push-deploy.outputs.nais-config-path}}
+      image-tag: ${{ needs.build-push.outputs.nais-tag }}
+      cluster: ${{needs.build-push.outputs.nais-cluster}}
+      nais-config-path:  ${{needs.build-push.outputs.nais-config-path}}
     secrets:
       registry-project: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
