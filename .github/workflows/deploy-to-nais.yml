@@ -60,7 +60,7 @@ on:
         required: true
         type: string
       ref:
-        description: "Commit reference of the deployment"
+        description: Commit reference of the deployment
         required: false
         default: master
         type: string
@@ -95,14 +95,9 @@ jobs:
           sparse-checkout: |
             apps/nais/maskinporten-guardian/${{ inputs.cluster }}
 
-      - name: Set app_config environment variable
+      - name: Configure environment variables
         run: |
           ext_config_dir="ext-config/apps/nais/maskinporten-guardian/${{ inputs.cluster }}"
-          ls -la ${ext_config_dir}
-          tree -L 6 ext-config
-          echo ${ext_config_dir}
-          ls -la ${ext_config_dir}
-          cat ${ext_config_dir}/protected-application-config.yml
           echo "ext_config=${ext_config_dir}" >> $GITHUB_ENV
 
       - uses: nais/deploy/actions/deploy@v2
