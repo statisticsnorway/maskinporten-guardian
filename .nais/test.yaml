@@ -44,9 +44,9 @@ spec:
       value: /conf/logback-test.xml
 
   filesFrom:
-    - configmap: guardian-application-configmap
+    - configmap: guardian-application-test-configmap
       mountPath:  /conf
-    - configmap: maskinporten-clients-configmap
+    - configmap: maskinporten-clients-test-configmap
       mountPath:  /conf/auth
 
 ---
