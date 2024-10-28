@@ -28,7 +28,7 @@ on:
         required: true
         type: string
       ref:
-        description: "Commit reference of the deployment"
+        description: Commit reference of the deployment
         required: false
         default: master
         type: string
