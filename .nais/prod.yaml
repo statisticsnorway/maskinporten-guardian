@@ -39,13 +39,15 @@ spec:
 
   env:
     - name: MICRONAUT_CONFIG_FILES
-      value: /conf/bootstrap-prod.yml,/conf/application-prod.yml,/conf/auth/maskinporten-clients.yml
+      value: /conf/bootstrap-prod.yml,/conf/application-prod.yml,/conf/protected/application-gcp.yml,/conf/auth/maskinporten-clients.yml
     - name: LOGBACK_CONFIGURATION_FILE
       value: /conf/logback-prod.xml
 
   filesFrom:
     - configmap: guardian-application-prod-configmap
       mountPath:  /conf
+    - configmap: guardian-application-prod-protected-configmap
+      mountPath:  /conf/protected
     - configmap: maskinporten-clients-prod-configmap
       mountPath:  /conf/auth
 
@@ -54,7 +56,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: maskinporten-guardian-application-yaml-configmap
+  name: guardian-application-prod-configmap
   namespace: dapla-stat
   labels:
     team: dapla-stat
@@ -88,9 +90,6 @@ data:
     endpoints:
       prometheus:
         sensitive: false
-    
-    gcp:
-      project-id: ssb-team-dapla
     
     services:
       secrets:

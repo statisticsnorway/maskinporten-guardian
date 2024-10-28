@@ -39,13 +39,15 @@ spec:
 
   env:
     - name: MICRONAUT_CONFIG_FILES
-      value: /conf/bootstrap-test.yml,/conf/application-test.yml,/conf/auth/maskinporten-clients.yml
+      value: /conf/bootstrap-test.yml,/conf/application-test.yml,/conf/protected/application-gcp.yml,/conf/auth/maskinporten-clients.yml
     - name: LOGBACK_CONFIGURATION_FILE
-      value: /conf/logback-test.xml
+      value: /conf/logback-prod.xml
 
   filesFrom:
     - configmap: guardian-application-test-configmap
       mountPath:  /conf
+    - configmap: guardian-application-test-protected-configmap
+      mountPath:  /conf/protected
     - configmap: maskinporten-clients-test-configmap
       mountPath:  /conf/auth
 
@@ -104,10 +106,7 @@ data:
     endpoints:
       prometheus:
         sensitive: false
-    
-    gcp:
-      project-id: ssb-team-dapla-staging
-    
+
     services:
       secrets:
         impl: GCP

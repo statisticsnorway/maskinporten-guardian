@@ -102,13 +102,13 @@ jobs:
           tree -L 6 ext-config
           echo ${ext_config_dir}
           ls -la ${ext_config_dir}
-          cat ${ext_config_dir}/maskinporten-clients.yml
+          cat ${ext_config_dir}/protected-application-config.yml
           echo "ext_config=${ext_config_dir}" >> $GITHUB_ENV
 
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: ${{ inputs.cluster }}
-          RESOURCE: ${{ inputs.nais-config-path }},${{ env.ext_config }}/maskinporten-clients.yml
+          RESOURCE: ${{ inputs.nais-config-path }},${{ env.ext_config }}/protected-application-config.yml,${{ env.ext_config }}/maskinporten-clients.yml
           VAR: image=${{ inputs.registry }}/${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}/${{ inputs.repository }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
           REF: ${{ inputs.ref }}
