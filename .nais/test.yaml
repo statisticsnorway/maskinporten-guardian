@@ -3,14 +3,116 @@ kind: Application
 metadata:
   name: maskinporten-guardian
   namespace: dapla-stat
+  labels:
+    team: dapla-stat
 spec:
-  image: {{image}}
-  port: 8080
-  ttl: 3h
+  image: "{{ image }}"  # Injected from the GitHub Action
+  port: 10310
   replicas:
     max: 1
     min: 1
   resources:
     requests:
-      cpu: 50m
+      cpu: 200m
       memory: 500Mi
+
+  ingresses:
+    - https://guardian.intern.test.ssb.no
+
+  accessPolicy:
+    outbound:
+      external:
+        - host: "auth.test.ssb.no"
+        - host: "keycloak.staging-bip-app.ssb.no"
+        - host: "maskinporten-test.no"
+        - host: "sky.maskinporten-test.no"
+
+  liveness:
+    path: /health/liveness
+    port: 10310
+  readiness:
+    path: /health/readiness
+    port: 10310
+  startup:
+    path: /health/readiness
+    port: 10310
+
+  env:
+    - name: MICRONAUT_CONFIG_FILES
+      value: /conf/bootstrap-test.yml,/conf/application-test.yml,/conf/protected/application-gcp.yml,/conf/auth/maskinporten-clients.yml
+    - name: LOGBACK_CONFIGURATION_FILE
+      value: /conf/logback-prod.xml
+
+  filesFrom:
+    - configmap: guardian-application-test-configmap
+      mountPath:  /conf
+    - configmap: guardian-application-test-protected-configmap
+      mountPath:  /conf/protected
+    - configmap: maskinporten-clients-test-configmap
+      mountPath:  /conf/auth
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guardian-application-test-configmap
+  namespace: dapla-stat
+  labels:
+    team: dapla-stat
+data:
+  bootstrap-test.yml: |-
+    micronaut:
+      application:
+        name: maskinporten-guardian
+      config-client:
+        enabled: true
+
+  application-test.yml: |-
+    micronaut:
+      application:
+        name: maskinporten-guardian
+      server:
+        port: 10310
+        cors:
+          enabled: true
+          configurations:
+            localhost-forwarding:
+              allowedOrigins:
+                - http://localhost:10310
+      router:
+        static-resources:
+          swagger:
+            paths: classpath:META-INF/swagger
+            mapping: /openapi/**
+      
+      security:
+        enabled: true
+        token:
+          name-key: preferred_username
+          jwt:
+            signatures:
+              jwks:
+                keycloak-staging:
+                  url: 'https://keycloak.staging-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
+                auth-test:
+                  url: 'https://auth.test.ssb.no/realms/ssb/protocol/openid-connect/certs'
+        intercept-url-map:
+          - pattern: /**/openapi/**
+            httpMethod: GET
+            access:
+              - isAnonymous()
+    
+    endpoints:
+      prometheus:
+        sensitive: false
+
+    services:
+      secrets:
+        impl: GCP
+    
+    certificates:
+      ssb-maskinporten-virksomhetssertifikat:
+        certificate-secret-id: ssb-test-seid2-p12-certificate
+        certificate-passphrase-secret-id: ssb-test-seid2-p12-passphrase
+        certificate-keystore-entry-alias: statistisk sentralbyrå test
