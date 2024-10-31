@@ -25,6 +25,7 @@ spec:
         - host: "auth.test.ssb.no"
         - host: "keycloak.staging-bip-app.ssb.no"
         - host: "test.maskinporten.no"
+        - host: "test.sky.maskinporten.no"
 
   liveness:
     path: /health/liveness
