@@ -1,6 +1,10 @@
 {
   "template": "https://github.com/statisticsnorway/cookiecutter-maven-build-deploy",
+<<<<<<< Updated upstream
   "commit": "28eca1c81f375755d1f6e8c5aa5f4af427f324ca",
+=======
+  "commit": "528e079354ffbf0df4cace1e8e27cbca761a3a66",
+>>>>>>> Stashed changes
   "checkout": null,
   "context": {
     "cookiecutter": {

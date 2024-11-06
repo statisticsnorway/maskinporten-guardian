@@ -1,0 +1,16 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: maskinporten-guardian
+  namespace: dapla-stat
+spec:
+  image: {{image}}
+  port: 8080
+  ttl: 3h
+  replicas:
+    max: 1
+    min: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 500Mi
