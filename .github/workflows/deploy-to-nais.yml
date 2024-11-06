@@ -64,10 +64,7 @@ on:
         required: false
         default: master
         type: string
-    secrets:
-      registry-project:
-        description: Artifact Registry project
-
+        
 jobs:
   deploy:
     name: Deploy to NAIS cluster

@@ -101,5 +101,4 @@ jobs:
       image-tag: ${{ needs.build-push.outputs.nais-tag }}
       cluster: ${{needs.build-push.outputs.nais-cluster}}
       nais-config-path:  ${{needs.build-push.outputs.nais-config-path}}
-    secrets:
-      registry-project: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
+    secrets: inherit
