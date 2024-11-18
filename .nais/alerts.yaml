@@ -25,7 +25,7 @@ spec:
           expr: kube_deployment_status_replicas_available{deployment="maskinporten-guardian"} == 0
           for: 1m
           annotations:
-            title: "Maskipnporten Guardian is unavailable"
+            title: "Maskinporten Guardian is unavailable"
             consequence: "Service is unavailable to users. "
           labels:
             service: maskinporten-guardian
