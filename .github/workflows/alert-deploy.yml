@@ -1,5 +1,5 @@
 name: Deploy alerts
-run-name: Deploy alerts for Fyllut to dev and prod
+run-name: Deploy alerts for Maskinporten Guardian to test and prod
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
     
   test-deploy-alert-config:
-    uses: statisticsnorway/dapla-stat-iac/.github/workflows/reusable/alertconfig_deploy.yaml@main
+    uses: statisticsnorway/dapla-stat-iac/.github/workflows/alertconfig_deploy.yaml@main
     with:
       cluster: test
 
@@ -45,6 +45,6 @@ jobs:
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
           
   prod-deploy-alert-config:
-    uses: statisticsnorway/dapla-stat-iac/.github/workflows/reusable/alertconfig_deploy.yaml@main
+    uses: statisticsnorway/dapla-stat-iac/.github/workflows/alertconfig_deploy.yaml@main
     with:
       cluster: prod
