@@ -19,6 +19,8 @@ spec:
           labels:
             service: maskinporten-guardian
             namespace: dapla-stat
+            alertmanager_custom_config: dapla-stat
+            alert_type: custom
             severity: critical
 
         - alert: Guardian is unavailable
@@ -30,4 +32,6 @@ spec:
           labels:
             service: maskinporten-guardian
             namespace: dapla-stat
+            alertmanager_custom_config: dapla-stat
+            alert_type: custom
             severity: critical
