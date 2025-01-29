@@ -27,12 +27,9 @@ jobs:
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
     
   test-deploy-alert-config:
-    name: Deploy AlertmanagerConfig to test
-    runs-on: ubuntu-latest
-    steps:
-    - uses: statisticsnorway/dapla-stat-iac/.github/workflows/reusable/alertconfig_deploy.yaml@main
-      with:
-        cluster: test
+    uses: statisticsnorway/dapla-stat-iac/.github/workflows/reusable/alertconfig_deploy.yaml@main
+    with:
+      cluster: test
 
   prod-deploy:
     name: Deploy alerts to prod
@@ -48,9 +45,6 @@ jobs:
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
           
   prod-deploy-alert-config:
-    name: Deploy AlertmanagerConfig to prod
-    runs-on: ubuntu-latest
-    steps:
-    - uses: statisticsnorway/dapla-stat-iac/.github/workflows/reusable/alertconfig_deploy.yaml@main
-      with:
-        cluster: prod
+    uses: statisticsnorway/dapla-stat-iac/.github/workflows/reusable/alertconfig_deploy.yaml@main
+    with:
+      cluster: prod
