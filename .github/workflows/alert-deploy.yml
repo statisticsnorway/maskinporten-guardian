@@ -30,11 +30,6 @@ jobs:
         with:
           cluster: "test"
 
-  test-deploy-alert-config:
-    uses: statisticsnorway/dapla-stat-reusable-workflows/.github/workflows/alertconfig_deploy.yaml@main
-    with:
-      cluster: test
-
   prod-deploy:
     name: Deploy alerts to prod
     runs-on: ubuntu-latest
