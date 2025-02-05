@@ -25,7 +25,11 @@ jobs:
           CLUSTER: test
           RESOURCE: .nais/alerts.yaml
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
-    
+      - name: Deploy AlertManagerConfig
+        uses: statisticsnorway/nais-alert-config@0.0.1
+        with:
+          cluster: "test"
+
   test-deploy-alert-config:
     uses: statisticsnorway/dapla-stat-reusable-workflows/.github/workflows/alertconfig_deploy.yaml@main
     with:
@@ -43,8 +47,7 @@ jobs:
           CLUSTER: prod
           RESOURCE: .nais/alerts.yaml
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
-          
-  prod-deploy-alert-config:
-    uses: statisticsnorway/dapla-stat-reusable-workflows/.github/workflows/alertconfig_deploy.yaml@main
-    with:
-      cluster: prod
+      - name: Deploy AlertManagerConfig
+        uses: statisticsnorway/nais-alert-config@0.0.1
+        with:
+          cluster: "prod"
