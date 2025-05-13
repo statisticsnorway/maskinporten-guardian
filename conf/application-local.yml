@@ -27,9 +27,9 @@ micronaut:
         signatures:
           jwks:
             keycloak-prod:
-              url: 'https://keycloak.prod-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
+              url: 'https://auth.ssb.no/realms/ssb/protocol/openid-connect/certs'
             keycloak-staging:
-              url: 'https://keycloak.staging-bip-app.ssb.no/auth/realms/ssb/protocol/openid-connect/certs'
+              url: 'https://auth.ssb.no/realms/ssb/protocol/openid-connect/certs'
 
 endpoints:
   prometheus:

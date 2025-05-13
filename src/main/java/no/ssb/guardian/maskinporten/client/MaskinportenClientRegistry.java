@@ -45,7 +45,7 @@ public class MaskinportenClientRegistry {
                         .withPrivateKey(cw.getPrivateKey())
                         .withProperties(MaskinportenklientProperties.builder()
                                 .numberOfSecondsLeftBeforeExpire(maskinportenClientConfig.getNumberOfSecondsLeftBeforeExpire())
-                                .issuer(maskinportenClientId)
+                                .issuer(maskinportenClientConfig.getIssuer())
                                 .audience(maskinportenClientConfig.getAudience())
                                 .tokenEndpoint(maskinportenClientConfig.getTokenEndpoint())
                                 .build())

@@ -24,7 +24,9 @@ public class MaskinportenClientConfig {
     // TODO: Validate ending slash using bean validation
     /** audience is the intended target for the JWT grant, ie. the identifier for Maskinporten. *** MUST end with a slash (/) *** */
     @NotNull
-    private String audience;
+    private String  audience;
+
+    private String  issuer;
 
     /** numberOfSecondsLeftBeforeExpire is the max number of seconds that can span before acquired access tokens must be used. Defaults to 120. */
     private int numberOfSecondsLeftBeforeExpire = 120;

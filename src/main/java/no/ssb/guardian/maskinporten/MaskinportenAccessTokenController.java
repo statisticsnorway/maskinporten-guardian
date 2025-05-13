@@ -120,8 +120,14 @@ public class MaskinportenAccessTokenController {
         }
 
         config.setDescription("Generated service account config for maskinporten client id " + maskinportenClientId);
-        config.setAudience(token.getMaskinportenAudience().get());
+        if(token.getSkyportenAudience().isPresent()) {
+            config.setAudience(token.getSkyportenAudience().get());
+        }else {
+            config.setAudience(token.getMaskinportenAudience().get());
+        }
+
         config.setDefaultScopes(token.getMaskinportenDefaultScopes().orElse(config.getDefaultScopes()));
+        config.setIssuer(token.getIssuer());
 
         return config;
     }

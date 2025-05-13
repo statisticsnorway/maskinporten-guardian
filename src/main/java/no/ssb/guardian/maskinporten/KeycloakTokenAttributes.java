@@ -1,10 +1,7 @@
 package no.ssb.guardian.maskinporten;
 
 import io.micronaut.security.authentication.ServerAuthentication;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 
 import java.security.Principal;
 import java.util.Collections;
@@ -28,22 +25,29 @@ public class KeycloakTokenAttributes {
 
     private final String maskinportenClientId;
     private final String maskinportenAudience;
+    private final String skyportenAudience;
+
+    @Getter
+    private final String issuer;
+
     private final Set<String> maskinportenDefaultScopes;
 
     public static KeycloakTokenAttributes parse(Principal principal) {
-        if (! (principal instanceof ServerAuthentication)) {
+        if (!(principal instanceof ServerAuthentication)) {
             throw new KeycloakTokenParseException("Unable to parse keycloak token attributes from " + principal);
         }
 
         Map<String, Object> claims = ((ServerAuthentication) principal).getAttributes();
         return KeycloakTokenAttributes.builder()
-          .preferredUsername((String) claims.get(Claim.PREFERRED_USERNAME))
-          .keycloakClientId((String) claims.get(Claim.CLIENT_ID))
-          .maskinportenClientId((String) claims.get(Claim.MASKINPORTEN_CLIENT_ID))
-          .maskinportenAudience((String) claims.get(Claim.MASKINPORTEN_AUDIENCE))
-          .maskinportenDefaultScopes(new HashSet<>((List<String>) claims.getOrDefault(Claim.MASKINPORTEN_DEFAULT_SCOPES, Collections.EMPTY_LIST)))
-          .userType(claims.containsKey(Claim.MASKINPORTEN_CLIENT_ID) ? MaskinportenGuardianUserType.MASKINPORTEN_GUARDIAN_SERVICE_ACCOUNT : MaskinportenGuardianUserType.PERSON)
-          .build();
+                .preferredUsername((String) claims.get(Claim.PREFERRED_USERNAME))
+                .keycloakClientId((String) claims.get(Claim.CLIENT_ID))
+                .maskinportenClientId((String) claims.get(Claim.MASKINPORTEN_CLIENT_ID))
+                .maskinportenAudience((String) claims.get(Claim.MASKINPORTEN_AUDIENCE))
+                .skyportenAudience((String) claims.get(Claim.SKYPORTEN_AUDIENCE))
+                .issuer((String) claims.get(Claim.ISSUER))
+                .maskinportenDefaultScopes(new HashSet<>((List<String>) claims.getOrDefault(Claim.MASKINPORTEN_DEFAULT_SCOPES, Collections.EMPTY_LIST)))
+                .userType(claims.containsKey(Claim.MASKINPORTEN_CLIENT_ID) ? MaskinportenGuardianUserType.MASKINPORTEN_GUARDIAN_SERVICE_ACCOUNT : MaskinportenGuardianUserType.PERSON)
+                .build();
     }
 
     public Optional<String> getMaskinportenClientId() {
@@ -52,6 +56,10 @@ public class KeycloakTokenAttributes {
 
     public Optional<String> getMaskinportenAudience() {
         return Optional.ofNullable(maskinportenAudience);
+    }
+
+    public Optional<String> getSkyportenAudience() {
+        return Optional.ofNullable(skyportenAudience);
     }
 
     public Optional<Set<String>> getMaskinportenDefaultScopes() {
@@ -70,6 +78,8 @@ public class KeycloakTokenAttributes {
         static final String MASKINPORTEN_DEFAULT_SCOPES = "maskinporten_default_scopes";
         static final String PREFERRED_USERNAME = "preferred_username";
         static final String CLIENT_ID = "clientId";
+        static final String SKYPORTEN_AUDIENCE = "skyportan_audience";
+        static final String ISSUER = "issuer";
     }
 
 }
