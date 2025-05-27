@@ -25,7 +25,6 @@ spec:
     outbound:
       external:
         - host: "auth.ssb.no"
-        - host: "keycloak.prod-bip-app.ssb.no"
         - host: "maskinporten.no"
         - host: "sky.maskinporten.no"
 
