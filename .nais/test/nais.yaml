@@ -2,9 +2,9 @@ apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
   name: maskinporten-guardian
-  namespace: dapla-stat
+  namespace: dftjen
   labels:
-    team: dapla-stat
+    team: dftjen
 spec:
   image: "{{ image }}"  # Injected from the GitHub Action
   port: 10310
@@ -23,7 +23,6 @@ spec:
     outbound:
       external:
         - host: "auth.test.ssb.no"
-        - host: "keycloak.staging-bip-app.ssb.no"
         - host: "test.maskinporten.no"
         - host: "test.sky.maskinporten.no"
 
@@ -57,9 +56,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: guardian-application-test-configmap
-  namespace: dapla-stat
+  namespace: dftjen
   labels:
-    team: dapla-stat
+    team: dftjen
 data:
   bootstrap-test.yml: |-
     micronaut:
