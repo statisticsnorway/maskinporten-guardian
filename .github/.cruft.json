@@ -5,7 +5,7 @@
   "context": {
     "cookiecutter": {
       "repo_name": "maskinporten-guardian",
-      "team_uniform_name": "dapla-stat",
+      "team_uniform_name": "dftjen",
       "program_type": "APPLICATION",
       "java_version": "21",
       "default_branch_name": "master",

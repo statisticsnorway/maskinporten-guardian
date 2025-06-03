@@ -16,7 +16,7 @@
     <jdk.version>21</jdk.version>
     <release.version>21</release.version>
     <github.repository>statisticsnorway/maskinporten-guardian</github.repository>
-    <dapla-artifact-registry.url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dapla-stat-maven</dapla-artifact-registry.url>
+    <dapla-artifact-registry.url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dftjen-maven</dapla-artifact-registry.url>
     <micronaut.version>4.6.0</micronaut.version>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>no.ssb.maskinporten.aot.generated</micronaut.aot.packageName>

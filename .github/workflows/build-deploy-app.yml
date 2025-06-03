@@ -40,7 +40,7 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: "projects/${{secrets.GAR_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/gh-actions/providers/gh-actions"
-          service_account: "gh-actions-dapla-stat@${{secrets.GAR_PROJECT_ID}}.iam.gserviceaccount.com"
+          service_account: "gh-actions-dftjen@${{secrets.GAR_PROJECT_ID}}.iam.gserviceaccount.com"
           token_format: access_token
       
       - name: Login to Artifact Registry
@@ -70,7 +70,7 @@ jobs:
         uses: nais/docker-build-push@v0
         id: docker-push
         with:
-          team: dapla-stat
+          team: dftjen
           tag: ${{ steps.version-tag.outputs.version_tag }} # Empty if not triggered by release
           pull: false
           project_id: ${{ secrets.NAIS_MANAGEMENT_PROJECT_ID }}
@@ -96,7 +96,7 @@ jobs:
     uses: ./.github/workflows/deploy-to-nais.yml
     with:
       registry: europe-north1-docker.pkg.dev
-      repository: dapla-stat
+      repository: dftjen
       image-name: maskinporten-guardian
       image-tag: ${{ needs.build-push.outputs.nais-tag }}
       cluster: ${{needs.build-push.outputs.nais-cluster}}

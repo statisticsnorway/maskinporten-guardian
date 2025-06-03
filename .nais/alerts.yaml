@@ -2,12 +2,12 @@ apiVersion: "monitoring.coreos.com/v1"
 kind: PrometheusRule
 metadata:
   name: alert-maskinporten-guardian
-  namespace: dapla-stat
+  namespace: dftjen
   labels:
-    team: dapla-stat
+    team: dftjen
 spec:
   groups:
-    - name: dapla-stat
+    - name: dftjen
       rules:
         - alert: High number of errors
           expr: (100 * sum by (app, namespace) (rate(log_messages_errors{app="maskinporten-guardian",level=~"Error"}[3m])) / sum by (app, namespace) (rate(log_messages_total{app="maskinporten-guardian"}[3m]))) > 10
@@ -15,11 +15,11 @@ spec:
           annotations:
             title: "High number of errors logged"
             consequence: "There can be different causes for errors, check logs for cause and evaluation of consequences."
-            action: "`kubectl describe pod -l app=maskinporten-guardian -n dapla-stat` -> `kubectl logs <podname>`"
+            action: "`kubectl describe pod -l app=maskinporten-guardian -ndftjen` -> `kubectl logs <podname>`"
           labels:
             service: maskinporten-guardian
-            namespace: dapla-stat
-            alertmanager_custom_config: dapla-stat
+            namespace: dftjen
+            alertmanager_custom_config: dftjen
             alert_type: custom
             severity: critical
 
@@ -31,7 +31,7 @@ spec:
             consequence: "Service is unavailable to users. "
           labels:
             service: maskinporten-guardian
-            namespace: dapla-stat
-            alertmanager_custom_config: dapla-stat
+            namespace: dftjen
+            alertmanager_custom_config: dftjen
             alert_type: custom
             severity: critical
