@@ -81,12 +81,12 @@ jobs:
           app-id: ${{ secrets.DAPLA_BOT_APP_ID }}
           private-key: ${{ secrets.DAPLA_BOT_PRIVATE_KEY }}
           owner: statisticsnorway
-          repositories: maskinporten-guardian, dapla-stat-iac
+          repositories: maskinporten-guardian, dftjen-iac
 
       - uses: actions/checkout@v4
         name: Retrieve protected configuration
         with:
-          repository: "statisticsnorway/dapla-stat-iac"
+          repository: "statisticsnorway/dftjen-iac"
           path: "ext-config"
           token: ${{ steps.app-token.outputs.token }}
           sparse-checkout: |
