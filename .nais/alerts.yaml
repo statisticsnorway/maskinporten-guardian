@@ -15,7 +15,7 @@ spec:
           annotations:
             title: "High number of errors logged"
             consequence: "There can be different causes for errors, check logs for cause and evaluation of consequences."
-            action: "`kubectl describe pod -l app=maskinporten-guardian -ndftjen` -> `kubectl logs <podname>`"
+            action: "`kubectl describe pod -l app=maskinporten-guardian -n dftjen` -> `kubectl logs <podname>`"
           labels:
             service: maskinporten-guardian
             namespace: dftjen
