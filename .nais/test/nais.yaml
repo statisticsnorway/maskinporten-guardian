@@ -95,11 +95,8 @@ data:
             signatures:
               jwks:
                 auth-test:
-                  url: 'https://auth.test.ssb.no/realms/ssb/protocol/openid-connect/certs'
-            claims-validators:
-              iss:
-                - 'https://labid.lab.dapla-test-external.ssb.no'   
-        
+                  url: 'https://labid.lab.dapla-test-external.ssb.no'
+                  
         intercept-url-map:
           - pattern: /**/openapi/**
             httpMethod: GET
