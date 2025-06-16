@@ -95,7 +95,7 @@ data:
             signatures:
               jwks:
                 auth-test:
-                  url: 'https://labid.lab.dapla-test-external.ssb.no'
+                  url: 'https://labid.lab.dapla-test-external.ssb.no/jwks'
                   
         intercept-url-map:
           - pattern: /**/openapi/**
