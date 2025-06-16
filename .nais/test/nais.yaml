@@ -95,6 +95,8 @@ data:
             signatures:
               jwks:
                 auth-test:
+                  url: 'https://auth.test.ssb.no/realms/ssb/protocol/openid-connect/certs'
+                labid-dapla-test:
                   url: 'https://labid.lab.dapla-test-external.ssb.no/jwks'
                   
         intercept-url-map:
