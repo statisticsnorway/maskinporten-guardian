@@ -98,7 +98,7 @@ data:
                   url: 'https://auth.test.ssb.no/realms/ssb/protocol/openid-connect/certs'
             claims-validators:
               iss:
-                - 'https://auth.test.ssb.no/realms/ssb'   
+                - 'https://labid.lab.dapla-test-external.ssb.no'   
         
         intercept-url-map:
           - pattern: /**/openapi/**
