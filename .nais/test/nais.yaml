@@ -27,6 +27,7 @@ spec:
         - host: "test.maskinporten.no"
         - host: "test.sky.maskinporten.no"
         - host: "labid.lab.dapla-test-external.ssb.no"
+        - host: "labid.lab.dapla-test.ssb.no"
 
   liveness:
     path: /health/liveness
@@ -96,8 +97,10 @@ data:
               jwks:
                 auth-test:
                   url: 'https://auth.test.ssb.no/realms/ssb/protocol/openid-connect/certs'
-                labid-dapla-test:
+                lab-id-north1-test:
                   url: 'https://labid.lab.dapla-test-external.ssb.no/jwks'
+                lab-id-west4-test:
+                  url: 'https://labid.lab.dapla-test.ssb.no/jwks'
                   
         intercept-url-map:
           - pattern: /**/openapi/**
