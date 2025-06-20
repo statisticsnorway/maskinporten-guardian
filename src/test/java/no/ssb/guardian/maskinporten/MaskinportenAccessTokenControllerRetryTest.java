@@ -56,7 +56,7 @@ public class MaskinportenAccessTokenControllerRetryTest {
                 .thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
 
         given()
-          .auth().oauth2(personalAccessToken("Kjell", "Fjell"))
+          .auth().oauth2(personalAccessToken("kje"))
           .contentType(ContentType.JSON)
         .when()
           .body(FetchMaskinportenAccessTokenRequest.builder()

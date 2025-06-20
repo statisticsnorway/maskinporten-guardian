@@ -55,4 +55,4 @@ maskinporten:
       description: client used for testing
       audience: https://ver2.maskinporten.no/
       authorized-users:
-        - kjell.fjell@ssb.no
+        - kje@ssb.no
