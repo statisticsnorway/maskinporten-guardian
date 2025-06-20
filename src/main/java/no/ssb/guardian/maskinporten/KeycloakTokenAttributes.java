@@ -24,7 +24,7 @@ public class KeycloakTokenAttributes {
     @NonNull
     private final MaskinportenGuardianUserType userType;
     @NonNull
-    private final String preferredUsername;
+    private final String sub;
 
     private final String keycloakClientId;
 
@@ -42,7 +42,7 @@ public class KeycloakTokenAttributes {
         log.info("Subject claim: {}", claims.get(Claim.SUB));
 
         return KeycloakTokenAttributes.builder()
-                .preferredUsername(Optional.ofNullable((String) claims.get(Claim.SUB))
+                .sub(Optional.ofNullable((String) claims.get(Claim.SUB))
                         .map(sub -> sub + "@ssb.no")
                         .orElse("@ssb.no"))
                 .keycloakClientId((String) claims.get(Claim.CLIENT_ID))
