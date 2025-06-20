@@ -27,19 +27,21 @@ public class KeycloakDevTokenIssuer {
         claims.put(Claim.MASKINPORTEN_CLIENT_ID, maskinportenClientId);
         claims.put(Claim.MASKINPORTEN_AUDIENCE, "https://ver2.maskinporten.no/");
         claims.put(Claim.MASKINPORTEN_DEFAULT_SCOPES, maskinportenDefaultScopes);
-        claims.put(Claim.PREFERRED_USERNAME, "service-account-" + username);
+        claims.put(Claim.SUB, "service-account-" + username);
 
         return TokenGenerator.createToken(claims);
     }
 
-    public static String personalAccessToken(String firstName, String lastName) {
-        String email = "%s.%s@ssb.no".formatted(firstName, lastName).toLowerCase();
+    public static String personalAccessToken(String username) {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put(Claim.AUDIENCE, List.of("jupyter", "account"));
-        claims.put(Claim.PREFERRED_USERNAME, email);
+        claims.put(Claim.SUB, username);
 
-        return TokenGenerator.createToken(claims);
+        String token  =  TokenGenerator.createToken(claims);
+        System.out.println(token);
+
+        return token;
     }
 
     private static Long expiryTime(int secondsFromNow) {
@@ -78,7 +80,7 @@ public class KeycloakDevTokenIssuer {
               .setHeaderParam("typ", "JWT")
               .signWith(SignatureAlgorithm.HS256, SECRET_BASE64)
               .setClaims(claims)
-              .setSubject(UUID.randomUUID().toString())
+              .setSubject(claims.get(Claim.SUB).toString())
               .setId(UUID.randomUUID().toString())
               ;
         }
@@ -103,7 +105,7 @@ public class KeycloakDevTokenIssuer {
         public static final String ISSUED_AT = "iat";
         public static final String ISSUER = "iss";
         public static final String NAME = "name";
-        public static final String PREFERRED_USERNAME = "preferred_username";
+        public static final String SUB = "sub";
         public static final String SCOPE = "scope";
         public static final String TYPE = "typ";
 

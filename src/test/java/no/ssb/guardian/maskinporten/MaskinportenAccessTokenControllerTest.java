@@ -115,7 +115,7 @@ public class MaskinportenAccessTokenControllerTest {
     @Test
     void validPersonalAccount_getAccessToken_shouldReturnToken() {
         given()
-          .auth().oauth2(personalAccessToken("Kjell", "Fjell"))
+          .auth().oauth2(personalAccessToken("kje"))
           .contentType(ContentType.JSON)
         .when()
           .body(FetchMaskinportenAccessTokenRequest.builder()
@@ -134,7 +134,7 @@ public class MaskinportenAccessTokenControllerTest {
     @Test
     void personalAccountWithoutAccess_getAccessToken_shouldGive403() {
         given()
-          .auth().oauth2(personalAccessToken("Unknown", "Person"))
+          .auth().oauth2(personalAccessToken("unknown"))
           .contentType(ContentType.JSON)
         .when()
           .body(FetchMaskinportenAccessTokenRequest.builder()
@@ -146,14 +146,14 @@ public class MaskinportenAccessTokenControllerTest {
         .then()
           .statusCode(HttpStatus.FORBIDDEN.getCode())
           .body(
-            "message", equalTo("unknown.person@ssb.no is not authorized to operate on behalf of maskinporten client " + MASKINPORTEN_CLIENT_ID_1)
+            "message", equalTo("unknown@ssb.no is not authorized to operate on behalf of maskinporten client " + MASKINPORTEN_CLIENT_ID_1)
           );
     }
 
     @Test
     void personalAccount_getAccessTokenForUnknownMaskinportenClient_shouldGive400() {
         given()
-          .auth().oauth2(personalAccessToken("Kjell", "Fjell"))
+          .auth().oauth2(personalAccessToken("kje"))
           .contentType(ContentType.JSON)
         .when()
           .body(FetchMaskinportenAccessTokenRequest.builder()
@@ -172,7 +172,7 @@ public class MaskinportenAccessTokenControllerTest {
     @Test
     void personalAccount_getAccessTokenWithoutSpecifyingMaskinportenClient_shouldGive400() {
         given()
-          .auth().oauth2(personalAccessToken("Kjell", "Fjell"))
+          .auth().oauth2(personalAccessToken("Kje"))
           .contentType(ContentType.JSON)
         .when()
           .body(FetchMaskinportenAccessTokenRequest.builder()
@@ -191,7 +191,7 @@ public class MaskinportenAccessTokenControllerTest {
     void personalAccount_getAccessTokenWithoutSpecifyingScopes_shouldGive400IfNotPreconfigured() {
         // Client without default scopes preconfigured
         given()
-          .auth().oauth2(personalAccessToken("Kjell", "Fjell"))
+          .auth().oauth2(personalAccessToken("kje"))
           .contentType(ContentType.JSON)
         .when()
           .body(FetchMaskinportenAccessTokenRequest.builder()
@@ -208,7 +208,7 @@ public class MaskinportenAccessTokenControllerTest {
 
         // Client with default scopes preconfigured
         given()
-          .auth().oauth2(personalAccessToken("Kjell", "Fjell"))
+          .auth().oauth2(personalAccessToken("kje"))
           .contentType(ContentType.JSON)
         .when()
           .body(FetchMaskinportenAccessTokenRequest.builder()

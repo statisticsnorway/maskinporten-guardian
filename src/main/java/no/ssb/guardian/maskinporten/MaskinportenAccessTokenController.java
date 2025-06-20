@@ -83,7 +83,7 @@ public class MaskinportenAccessTokenController {
 
         return MaskinportenService.GetMaskinportenAccessTokenDto.builder()
           .userType(token.getUserType())
-          .principalName(token.getPreferredUsername())
+          .principalName(token.getSub())
           .clientConfig(maskinportenClientConfig)
           .requestedScopes(requestedScopes(request.getScopes(), maskinportenClientConfig.getDefaultScopes()))
           .build();
