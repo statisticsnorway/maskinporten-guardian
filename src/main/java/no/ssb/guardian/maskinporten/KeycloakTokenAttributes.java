@@ -23,6 +23,7 @@ public class KeycloakTokenAttributes {
 
     @NonNull
     private final MaskinportenGuardianUserType userType;
+
     @NonNull
     private final String sub;
 
@@ -31,6 +32,8 @@ public class KeycloakTokenAttributes {
     private final String maskinportenClientId;
     private final String maskinportenAudience;
     private final Set<String> maskinportenDefaultScopes;
+
+    private final String skyportenAudience;
 
     public static KeycloakTokenAttributes parse(Principal principal) {
         if (!(principal instanceof ServerAuthentication)) {
@@ -48,6 +51,7 @@ public class KeycloakTokenAttributes {
                 .keycloakClientId((String) claims.get(Claim.CLIENT_ID))
                 .maskinportenClientId((String) claims.get(Claim.MASKINPORTEN_CLIENT_ID))
                 .maskinportenAudience((String) claims.get(Claim.MASKINPORTEN_AUDIENCE))
+                .skyportenAudience((String) claims.get(Claim.SKYPORTEN_AUDIENCE))
                 .maskinportenDefaultScopes(new HashSet<>((List<String>) claims.getOrDefault(Claim.MASKINPORTEN_DEFAULT_SCOPES, Collections.EMPTY_LIST)))
                 .userType(claims.containsKey(Claim.MASKINPORTEN_CLIENT_ID) ? MaskinportenGuardianUserType.MASKINPORTEN_GUARDIAN_SERVICE_ACCOUNT : MaskinportenGuardianUserType.PERSON)
                 .build();
@@ -65,6 +69,10 @@ public class KeycloakTokenAttributes {
         return Optional.ofNullable(maskinportenDefaultScopes);
     }
 
+    public Optional<String> getSkyportenAudience() {
+        return Optional.ofNullable(skyportenAudience);
+    }
+
     public static class KeycloakTokenParseException extends RuntimeException {
         public KeycloakTokenParseException(String message) {
             super(message);
@@ -75,6 +83,7 @@ public class KeycloakTokenAttributes {
         static final String MASKINPORTEN_CLIENT_ID = "maskinporten_client_id";
         static final String MASKINPORTEN_AUDIENCE = "maskinporten_audience";
         static final String MASKINPORTEN_DEFAULT_SCOPES = "maskinporten_default_scopes";
+        static final String SKYPORTEN_AUDIENCE = "skyporten_audience";
         static final String SUB = "sub";
         static final String CLIENT_ID = "clientId";
     }

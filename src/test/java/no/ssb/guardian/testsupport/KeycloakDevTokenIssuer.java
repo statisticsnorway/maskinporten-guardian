@@ -25,9 +25,11 @@ public class KeycloakDevTokenIssuer {
 
         claims.put(Claim.AUDIENCE, List.of("maskinporten-guardian", "account"));
         claims.put(Claim.MASKINPORTEN_CLIENT_ID, maskinportenClientId);
-        claims.put(Claim.MASKINPORTEN_AUDIENCE, "https://ver2.maskinporten.no/");
+        claims.put(Claim.MASKINPORTEN_AUDIENCE, "https://maskinporten.no/");
         claims.put(Claim.MASKINPORTEN_DEFAULT_SCOPES, maskinportenDefaultScopes);
+        claims.put(Claim.SKYPORTEN_AUDIENCE, "https://sky.maskinporten.no");
         claims.put(Claim.SUB, "service-account-" + username);
+
 
         return TokenGenerator.createToken(claims);
     }
@@ -109,11 +111,14 @@ public class KeycloakDevTokenIssuer {
         public static final String SCOPE = "scope";
         public static final String TYPE = "typ";
 
+
         // custom claims
         public static final String CLIENT_ID = "clientId";
         public static final String MASKINPORTEN_CLIENT_ID = "maskinporten_client_id";
         public static final String MASKINPORTEN_DEFAULT_SCOPES = "maskinporten_default_scopes";
         public static final String MASKINPORTEN_AUDIENCE = "maskinporten_audience";
+        public static final String SKYPORTAN_ISSUER = "issuer";
+        public static final String SKYPORTEN_AUDIENCE = "skyportan_audience";
     }
 
 }
