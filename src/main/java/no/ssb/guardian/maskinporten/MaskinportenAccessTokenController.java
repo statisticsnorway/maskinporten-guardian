@@ -123,8 +123,10 @@ public class MaskinportenAccessTokenController {
 
         // Set audience based on getSkyportenAudience() if present, else use getMaskinportenAudience()
         if (token.getSkyportenAudience().isPresent() ) {
+            log.info("Getting skyporten audience: {}", token.getSkyportenAudience());
             config.setAudience(token.getSkyportenAudience().get());
         } else if (token.getMaskinportenAudience().isPresent() ) {
+            log.info("Getting maskinporten audience: {}", token.getMaskinportenAudience());
             config.setAudience(token.getMaskinportenAudience().get());
         }
 
