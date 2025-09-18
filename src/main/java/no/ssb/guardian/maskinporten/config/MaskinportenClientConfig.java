@@ -50,8 +50,11 @@ public class MaskinportenClientConfig {
      * return the endpoint url at the maskinporten API that issues access tokens from JWT grants.
      * See: https://docs.digdir.no/maskinporten_protocol_token.html
      */
-    public String getTokenEndpoint() {
+    public String getMaskinportenTokenEndpoint() {
         return audience + "token";
     }
 
+    public String getSkyportenTokenEndpoint() {
+        return audience + "/token";
+    }
 }
