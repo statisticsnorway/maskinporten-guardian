@@ -41,13 +41,21 @@ public class MaskinportenClientRegistry {
                 CertificateService.CertificateWrapper cw = certificateService.loadCertificate();
                 certificateService.validateCertificate(cw.getCertificate());
 
+                String tokenEndpoint;
+                String audience = maskinportenClientConfig.getAudience();
+                if (audience != null && audience.contains("skyporten")) {
+                    tokenEndpoint = maskinportenClientConfig.getSkyportenTokenEndpoint();
+                } else {
+                    tokenEndpoint = maskinportenClientConfig.getMaskinportenTokenEndpoint();
+                }
+
                 Maskinportenklient klient = Maskinportenklient.builder()
                         .withPrivateKey(cw.getPrivateKey())
                         .withProperties(MaskinportenklientProperties.builder()
                                 .numberOfSecondsLeftBeforeExpire(maskinportenClientConfig.getNumberOfSecondsLeftBeforeExpire())
                                 .issuer(maskinportenClientId)
                                 .audience(maskinportenClientConfig.getAudience())
-                                .tokenEndpoint(maskinportenClientConfig.getTokenEndpoint())
+                                .tokenEndpoint(tokenEndpoint)
                                 .build())
                         .usingVirksomhetssertifikat(cw.getCertificate())
                         .build();
