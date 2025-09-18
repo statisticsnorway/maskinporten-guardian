@@ -83,7 +83,7 @@ public class KeycloakTokenAttributes {
         static final String MASKINPORTEN_CLIENT_ID = "maskinporten_client_id";
         static final String MASKINPORTEN_AUDIENCE = "maskinporten_audience";
         static final String MASKINPORTEN_DEFAULT_SCOPES = "maskinporten_default_scopes";
-        static final String SKYPORTEN_AUDIENCE = "skyportan_audience";
+        static final String SKYPORTEN_AUDIENCE = "skyporten_audience";
         static final String SUB = "sub";
         static final String CLIENT_ID = "clientId";
     }
