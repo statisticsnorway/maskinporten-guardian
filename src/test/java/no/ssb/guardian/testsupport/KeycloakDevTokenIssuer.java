@@ -117,8 +117,7 @@ public class KeycloakDevTokenIssuer {
         public static final String MASKINPORTEN_CLIENT_ID = "maskinporten_client_id";
         public static final String MASKINPORTEN_DEFAULT_SCOPES = "maskinporten_default_scopes";
         public static final String MASKINPORTEN_AUDIENCE = "maskinporten_audience";
-        public static final String SKYPORTAN_ISSUER = "issuer";
-        public static final String SKYPORTEN_AUDIENCE = "skyportan_audience";
+        public static final String SKYPORTEN_AUDIENCE = "skyporten_audience";
     }
 
 }
