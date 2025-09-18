@@ -43,7 +43,7 @@ public class MaskinportenClientRegistry {
 
                 String tokenEndpoint;
                 String audience = maskinportenClientConfig.getAudience();
-                if (audience != null && audience.contains("skyporten")) {
+                if (audience != null && audience.contains("sky")) {
                     tokenEndpoint = maskinportenClientConfig.getSkyportenTokenEndpoint();
                 } else {
                     tokenEndpoint = maskinportenClientConfig.getMaskinportenTokenEndpoint();
