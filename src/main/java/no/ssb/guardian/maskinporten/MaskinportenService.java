@@ -38,8 +38,8 @@ public class MaskinportenService {
 
         String maskinportenAccessToken;
 
-        if (dto.getAccesssTokenAudience() != null && !dto.getAccesssTokenAudience().isEmpty()) {
-            maskinportenAccessToken = maskinportenClient.getAccessToken(dto.getRequestedScopes(), dto.getAccesssTokenAudience());
+        if (dto.getAccessTokenAudience() != null && !dto.getAccessTokenAudience().isEmpty()) {
+            maskinportenAccessToken = maskinportenClient.getAccessToken(dto.getRequestedScopes(), dto.getAccessTokenAudience());
 
         } else {
             maskinportenAccessToken = maskinportenClient.getAccessToken(dto.getRequestedScopes());
@@ -63,7 +63,8 @@ public class MaskinportenService {
         @NonNull
         private Set<String> requestedScopes;
 
-        private String accesssTokenAudience;
+        private String accessTokenAudience;
     }
 
 }
+
