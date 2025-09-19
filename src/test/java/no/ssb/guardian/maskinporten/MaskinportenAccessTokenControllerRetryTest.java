@@ -30,6 +30,7 @@ public class MaskinportenAccessTokenControllerRetryTest {
     private final static String MASKINPORTEN_DUMMY_ACCESS_TOKEN = "maskinporten-dummy-token";
     private final static String MASKINPORTEN_CLIENT_ID_1 = "7ea43b76-6b7d-49e8-af2b-4114ebb66c80";
     private final static Set<String> REQUESTED_SCOPES = Set.of("some:scope1");
+    private final static String ACCESS_TOKEN_AUDIENCE = "dummy-audience";
 
     @Inject
     private EmbeddedServer embeddedServer;
@@ -59,17 +60,17 @@ public class MaskinportenAccessTokenControllerRetryTest {
           .auth().oauth2(personalAccessToken("kje"))
           .contentType(ContentType.JSON)
         .when()
-          .body(FetchMaskinportenAccessTokenRequest.builder()
-            .maskinportenClientId(MASKINPORTEN_CLIENT_ID_1)
-            .scopes(REQUESTED_SCOPES)
-            .build()
-            )
-            .post(MASKINPORTEN_ACCESS_TOKEN_ENDPOINT)
-        .then()
-          .statusCode(HttpStatus.OK.getCode())
-          .body(
-              "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
-          );
+                .body(FetchMaskinportenAccessTokenRequest.builder()
+                                .maskinportenClientId(MASKINPORTEN_CLIENT_ID_1)
+                                .scopes(REQUESTED_SCOPES)
+                        .build()
+                )
+                .post(MASKINPORTEN_ACCESS_TOKEN_ENDPOINT)
+                .then()
+                .statusCode(HttpStatus.OK.getCode())
+                .body(
+                        "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
+                );
         verify(maskinportenClientMock, times(2)).getAccessToken(anySet());
     }
 }

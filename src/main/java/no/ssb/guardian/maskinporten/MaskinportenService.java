@@ -35,7 +35,16 @@ public class MaskinportenService {
         }
 
         MaskinportenClient maskinportenClient = maskinportenClientRegistry.get(dto.getClientConfig());
-        String maskinportenAccessToken = maskinportenClient.getAccessToken(dto.getRequestedScopes());
+
+        String maskinportenAccessToken;
+
+        if (dto.getAccessTokenAudience() != null && !dto.getAccessTokenAudience().isEmpty()) {
+            maskinportenAccessToken = maskinportenClient.getAccessToken(dto.getRequestedScopes(), dto.getAccessTokenAudience());
+
+        } else {
+            maskinportenAccessToken = maskinportenClient.getAccessToken(dto.getRequestedScopes());
+        }
+
         return maskinportenAccessToken;
     }
 
@@ -53,6 +62,9 @@ public class MaskinportenService {
 
         @NonNull
         private Set<String> requestedScopes;
+
+        private String accessTokenAudience;
     }
 
 }
+
