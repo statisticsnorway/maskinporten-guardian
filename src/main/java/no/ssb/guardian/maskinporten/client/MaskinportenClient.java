@@ -9,4 +9,9 @@ public interface MaskinportenClient {
      */
     String getAccessToken(Set<String> scopes);
 
+    /**
+     * Retrieve maskinporten access token with specifiecd scope and access token audience
+     *
+     */
+    String getAccessToken(Set<String> scopes, String accessTokenAudience);
 }

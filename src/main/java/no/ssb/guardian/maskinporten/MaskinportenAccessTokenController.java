@@ -82,11 +82,12 @@ public class MaskinportenAccessTokenController {
         }
 
         return MaskinportenService.GetMaskinportenAccessTokenDto.builder()
-          .userType(token.getUserType())
-          .principalName(token.getSub())
-          .clientConfig(maskinportenClientConfig)
-          .requestedScopes(requestedScopes(request.getScopes(), maskinportenClientConfig.getDefaultScopes()))
-          .build();
+                .userType(token.getUserType())
+                .principalName(token.getSub())
+                .clientConfig(maskinportenClientConfig)
+                .requestedScopes(requestedScopes(request.getScopes(), maskinportenClientConfig.getDefaultScopes()))
+                .accesssTokenAudience(request.getAccessTokenAudience())
+                .build();
     }
 
     @VisibleForTesting
@@ -166,6 +167,7 @@ public class MaskinportenAccessTokenController {
     public static class FetchMaskinportenAccessTokenRequest {
         private String maskinportenClientId;
         private Set<String> scopes;
+        private String accessTokenAudience;
     }
 
     @Data

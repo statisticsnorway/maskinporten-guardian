@@ -51,6 +51,7 @@ public class MaskinportenAccessTokenControllerTest {
     void setUp() {
         RestAssured.port = embeddedServer.getPort();
         when(maskinportenClientMock.getAccessToken(anySet())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
+        when(maskinportenClientMock.getAccessToken(anySet(), any())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
         when(maskinportenClientRegistry.get(any())).thenReturn(maskinportenClientMock);
     }
 
