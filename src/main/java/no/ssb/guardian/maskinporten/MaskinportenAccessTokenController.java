@@ -86,7 +86,7 @@ public class MaskinportenAccessTokenController {
                 .principalName(token.getSub())
                 .clientConfig(maskinportenClientConfig)
                 .requestedScopes(requestedScopes(request.getScopes(), maskinportenClientConfig.getDefaultScopes()))
-                .accesssTokenAudience(request.getAccessTokenAudience())
+                .accessTokenAudience(request.getAccessTokenAudience())
                 .build();
     }
 
