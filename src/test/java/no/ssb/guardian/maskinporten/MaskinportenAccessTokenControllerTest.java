@@ -33,6 +33,7 @@ public class MaskinportenAccessTokenControllerTest {
     private final static String MASKINPORTEN_CLIENT_ID_1 = "7ea43b76-6b7d-49e8-af2b-4114ebb66c80";
     private final static String MASKINPORTEN_CLIENT_ID_2 = "675c0111-2035-4d15-9cce-037f55439e80";
     private final static Set<String> REQUESTED_SCOPES = Set.of("some:scope1");
+    private final static String ACCESS_TOKEN_AUDIENCE = "dummy_access_token_audience";
 
     @Inject
     private EmbeddedServer embeddedServer;
@@ -51,6 +52,7 @@ public class MaskinportenAccessTokenControllerTest {
     void setUp() {
         RestAssured.port = embeddedServer.getPort();
         when(maskinportenClientMock.getAccessToken(anySet())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
+        when(maskinportenClientMock.getAccessToken(anySet(), any())).thenReturn(MASKINPORTEN_DUMMY_ACCESS_TOKEN);
         when(maskinportenClientRegistry.get(any())).thenReturn(maskinportenClientMock);
     }
 
@@ -77,6 +79,25 @@ public class MaskinportenAccessTokenControllerTest {
         verify(maskinportenClientMock, times(1)).getAccessToken(anySet());
     }
 
+    @Test
+    void validServiceAccount_getAccessToken_with_audience_shouldReturnToken() {
+        given()
+                .auth().oauth2(serviceAccountKeycloakToken())
+                .contentType(ContentType.JSON)
+                .when()
+                .body(FetchMaskinportenAccessTokenRequest.builder()
+                        .scopes(REQUESTED_SCOPES)
+                        .accessTokenAudience(ACCESS_TOKEN_AUDIENCE)
+                        .build()
+                )
+                .post(MASKINPORTEN_ACCESS_TOKEN_ENDPOINT)
+                .then()
+                .statusCode(HttpStatus.OK.getCode())
+                .body(
+                        "accessToken", equalTo(MASKINPORTEN_DUMMY_ACCESS_TOKEN)
+                );
+        verify(maskinportenClientMock, times(1)).getAccessToken(anySet(), any());
+    }
     @Test
     void serviceAccount_getAccessTokenWithEmptyRequestBody_shouldReturnToken() {
         given()
