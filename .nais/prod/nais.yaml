@@ -28,7 +28,6 @@ spec:
         - host: "maskinporten.no"
         - host: "sky.maskinporten.no"
         - host: "labid.lab.dapla-external.ssb.no"
-        - host: "labid.lab.dapla.ssb.no"
 
   liveness:
     path: /health/liveness
