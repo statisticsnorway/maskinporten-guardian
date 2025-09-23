@@ -44,4 +44,5 @@ public class MaskinportenClientImpl implements MaskinportenClient {
         log.debug("Received access token for scopes {} and audience {}: {}", scopes, accessTokenAudience, token != null ? "[REDACTED]" : "null");
         return token;
     }
+
 }
