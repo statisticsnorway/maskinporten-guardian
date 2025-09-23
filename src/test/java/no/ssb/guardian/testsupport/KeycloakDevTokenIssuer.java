@@ -40,10 +40,7 @@ public class KeycloakDevTokenIssuer {
         claims.put(Claim.AUDIENCE, List.of("jupyter", "account"));
         claims.put(Claim.SUB, username);
 
-        String token  =  TokenGenerator.createToken(claims);
-        System.out.println(token);
-
-        return token;
+        return TokenGenerator.createToken(claims);
     }
 
     private static Long expiryTime(int secondsFromNow) {
