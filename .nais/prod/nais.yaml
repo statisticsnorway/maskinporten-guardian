@@ -88,8 +88,6 @@ data:
                   url: 'https://auth.ssb.no/realms/ssb/protocol/openid-connect/certs'
                 lab-id-north1-test:
                   url: 'https://labid.lab.dapla-external.ssb.no/jwks'
-                lab-id-west4-test:
-                  url: 'https://labid.lab.dapla.ssb.no/jwks'
 
     endpoints:
       prometheus:
