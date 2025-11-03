@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: maskinporten-guardian
+  annotations:
+    backstage.io/description: |
+      Maskinporten Guardian is a service that acts as an intermediary between clients and the Maskinporten authorization server. It handles token requests and manages client credentials securely.
+    github.com/project-slug: statisticsnorway/maskinporten-guardian
+spec:
+  type: service
+  lifecycle: production
+  owner: dftjen-developers
+  tags:
+    - nais
+    - maskinporten
+    - micronaut
+
