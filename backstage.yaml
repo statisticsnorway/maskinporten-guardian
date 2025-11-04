@@ -18,4 +18,6 @@ spec:
     - nais
     - maskinporten
     - micronaut
+  dependsOn:
+    - system:keycloak
 
