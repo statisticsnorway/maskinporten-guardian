@@ -11,7 +11,7 @@ The Guardian manages sensitive information such as certificates and secrets. It 
 tokens on behalf of different _Maskinporten clients_. The Guardian also handles audit logging, making it easy to see
 _who_ requested access to _what_ API _when_.
 
-## What's Maskinporten?
+## What is Maskinporten?
 
 Maskinporten is a national, common solution providing secure authentication and access control that enables data
 exchange between different Norwegian data providers. A [growing number](https://samarbeid.digdir.no/maskinporten/maskinporten/995)
