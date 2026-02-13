@@ -23,10 +23,12 @@ spec:
     outbound:
       external:
         - host: "auth.test.ssb.no"
+        - host: "auth-play.test.ssb.no"
         - host: "keycloak.staging-bip-app.ssb.no"
         - host: "test.maskinporten.no"
         - host: "test.sky.maskinporten.no"
         - host: "labid.lab.dapla-test-external.ssb.no"
+        - host: "labid.lab.dapla-dev-external.ssb.no"
 
   liveness:
     path: /health/liveness
