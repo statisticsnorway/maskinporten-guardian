@@ -73,9 +73,9 @@ jobs:
       contents: "read"
       id-token: "write"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/create-github-app-token@v1
+      - uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1
         id: app-token
         with:
           app-id: ${{ secrets.DAPLA_BOT_APP_ID }}
@@ -83,7 +83,7 @@ jobs:
           owner: statisticsnorway
           repositories: maskinporten-guardian, dftjen-iac
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         name: Retrieve protected configuration
         with:
           repository: "statisticsnorway/dftjen-iac"
@@ -97,7 +97,7 @@ jobs:
           ext_config_dir="ext-config/apps/nais/maskinporten-guardian/${{ inputs.cluster }}"
           echo "ext_config=${ext_config_dir}" >> $GITHUB_ENV
 
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@849e900e3cfa7faf7ad1532bb3a3e6499c932199 # v2
         env:
           CLUSTER: ${{ inputs.cluster }}
           RESOURCE: ${{ inputs.nais-config-path }},${{ env.ext_config }}/protected-application-config.yml,${{ env.ext_config }}/maskinporten-clients.yml

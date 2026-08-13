@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         name: Retrieve AlertManager configuration
         with:
           repository: "statisticsnorway/nais-alert-config"
@@ -32,7 +32,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Deploy to test
-        uses: nais/deploy/actions/deploy@v2
+        uses: nais/deploy/actions/deploy@849e900e3cfa7faf7ad1532bb3a3e6499c932199 # v2
         env:
           CLUSTER: test
           RESOURCE: .nais/alerts.yaml,ext_alertconfig/alertconfig.yaml
@@ -44,9 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         name: Retrieve AlertManager configuration
         with:
           repository: "statisticsnorway/nais-alert-config"
@@ -54,9 +54,9 @@ jobs:
           sparse-checkout: |
             alertconfig.yaml
           sparse-checkout-cone-mode: false
-      
+
       - name: Deploy to prod
-        uses: nais/deploy/actions/deploy@v2
+        uses: nais/deploy/actions/deploy@849e900e3cfa7faf7ad1532bb3a3e6499c932199 # v2
         env:
           CLUSTER: prod
           RESOURCE: .nais/alerts.yaml,ext_alertconfig/alertconfig.yaml

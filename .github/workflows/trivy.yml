@@ -1,0 +1,51 @@
+name: Trivy Security Scan
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.md"
+      - ".editorconfig"
+      - ".gitignore"
+      - ".gitattributes"
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.md"
+      - ".editorconfig"
+      - ".gitignore"
+      - ".gitattributes"
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  # Scope concurrency per event type so that a push-to-main does not cancel
+  # an in-flight pull_request scan.
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trivy:
+    name: Trivy Vulnerability Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Fail build on Critical/High Vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: 'fs'
+          format: 'table'
+          scan-ref: '.'
+          scanners: 'vuln,secret,misconfig'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: 1
