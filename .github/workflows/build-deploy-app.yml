@@ -10,6 +10,13 @@ on:
       - ".mvn"
       - ".gitignore"
 
+# One deploy per cluster at a time. The maven-release-plugin pushes two commits
+# back to back; without this both deploy to test and the older one times out.
+# Newer test deploys cancel older ones; prod deploys queue and are never cancelled.
+concurrency:
+  group: deploy-${{ github.event_name == 'release' && 'prod' || 'test' }}
+  cancel-in-progress: ${{ github.event_name != 'release' }}
+
 jobs:
   build-push:
     name: Build and push to registries
