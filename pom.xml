@@ -167,7 +167,7 @@
     <dependency>
       <groupId>no.ks.fiks</groupId>
       <artifactId>maskinporten-client</artifactId>
-      <version>3.5.0</version>
+      <version>3.6.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -199,7 +199,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.26.3</version>
+      <version>3.27.7</version>
       <scope>test</scope>
     </dependency>
     <dependency>
