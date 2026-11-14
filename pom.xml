@@ -9,7 +9,7 @@
   <parent>
     <groupId>io.micronaut.platform</groupId>
     <artifactId>micronaut-parent</artifactId>
-    <version>4.10.17</version>
+    <version>4.10.24</version>
   </parent>
   <properties>
     <packaging>jar</packaging>
@@ -17,7 +17,9 @@
     <release.version>21</release.version>
     <github.repository>statisticsnorway/maskinporten-guardian</github.repository>
     <dapla-artifact-registry.url>artifactregistry://europe-north1-maven.pkg.dev/artifact-registry-5n/dftjen-maven</dapla-artifact-registry.url>
-    <micronaut.version>4.10.17</micronaut.version>
+    <micronaut.version>4.10.24</micronaut.version>
+    <!-- Override micronaut-managed guava version to fix CVE-2026-102554 (DoS during deserialization) -->
+    <guava.version>33.7.2-jre</guava.version>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>no.ssb.maskinporten.aot.generated</micronaut.aot.packageName>
     <micronaut.runtime>netty</micronaut.runtime>
@@ -75,6 +77,23 @@
         <groupId>io.micrometer</groupId>
         <artifactId>micrometer-registry-prometheus</artifactId>
         <version>1.15.12</version>
+      </dependency>
+      <!-- Override httpcore5 (transitive via maskinporten-client) to fix CVE-2026-54399 and CVE-2026-54428 (DoS via HTTP headers) -->
+      <dependency>
+        <groupId>org.apache.httpcomponents.core5</groupId>
+        <artifactId>httpcore5</artifactId>
+        <version>5.4.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents.core5</groupId>
+        <artifactId>httpcore5-h2</artifactId>
+        <version>5.4.4</version>
+      </dependency>
+      <!-- Pin grpc-netty-shaded (transitive via micronaut-gcp-secret-manager) to fix CVE-2025-55163 (Netty MadeYouReset HTTP/2 DoS) -->
+      <dependency>
+        <groupId>io.grpc</groupId>
+        <artifactId>grpc-netty-shaded</artifactId>
+        <version>1.75.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
