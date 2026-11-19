@@ -1,7 +1,8 @@
 # Distroless Java 21 runtime. The JDK trust store is built from Debian's ca-certificates,
 # so CA distrust fixes (e.g. eMudhra, https://emudhra.we-have-a-problem.com/) arrive with a new base image.
-# Pinned by digest (includes libbrotli1 1.1.0-2+deb13u1, CVE-2026-111497); Dependabot bumps the digest.
-FROM gcr.io/distroless/java21-debian13:nonroot@sha256:a2aeb5a7a714cfe928b31fdf67b2d23f503ea6b9612705af062de22e0c50ba77
+# Pinned by digest (includes Temurin 21.0.13.1 for CVE-2026-114938, zlib1g 1.3.1-1+deb13u1 for CVE-2026-85091,
+# libbrotli1 1.1.0-2+deb13u1 for CVE-2026-111497); Dependabot bumps the digest.
+FROM gcr.io/distroless/java21-debian13:nonroot@sha256:cddca4cc6b1dfc76142e5c1a1d00ce7a79bcc1292ad65d34227794f9d371a496
 
 WORKDIR /app
 
